@@ -1,0 +1,15 @@
+version: '2'
+services:
+  api:
+    image: $ST_BOT_IMAGE
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    environment:
+      NODE_ENV: "production"
+      OPENSHIFT_NODEJS_PORT: "80"
+      OPENSHIFT_NODEJS_IP: "0.0.0.0"
+    tty: true
+    entrypoint: ["sh"]
+    ports:
+      - "0.0.0.0:9000:80"

@@ -1,0 +1,13 @@
+{
+  "apps": [{
+    "name": "searchtelegram-bot",
+    "script": "./dist/server/index.js",
+    "watch": ["./dist"],
+    "exec_mode": "fork",
+    "source_map_support": true,
+    "log_date_format": "YYYY-MM-DD HH:mm Z",
+    "env": {
+      "NODE_ENV": "development"
+    }
+  }]
+}

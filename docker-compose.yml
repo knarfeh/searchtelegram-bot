@@ -1,0 +1,18 @@
+api:
+  build: .
+  environment:
+    NODE_ENV: 'development'
+  volumes:
+    - .:/app
+    - /app/node_modules
+  ports:
+    - "0.0.0.0:9000:9000"
+  command: sh -c "mkdir -p dist && touch ./dist/index.js && nodemon --delay 500ms ./dist/index.js"
+
+transpiler:
+  build: .
+  volumes:
+    - .:/app
+    - /app/node_modules
+  command: ["tsc", "-w"]
+
