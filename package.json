@@ -10,7 +10,7 @@
     "compression": "^1.6.2",
     "dotenv": "^6.0.0",
     "elasticsearch": "^15.1.1",
-    "express": "^4.14.0",
+    "express": "^4.16.3",
     "http": "0.0.0",
     "lodash": "^4.15.0",
     "method-override": "^2.3.6",
@@ -34,10 +34,12 @@
     "supertest": "^2.0.0",
     "supertest-as-promised": "^4.0.2",
     "tsc": "^1.20150623.0",
-    "tslint": "^3.15.1",
-    "typescript": "^1.8.10"
+    "tslint": "^5.8.0",
+    "typescript": "^2.6"
   },
   "scripts": {
+    "lint:ts": "tslint -p . -t stylish --exclude \"{build,node_modules}/**\" \"**/*.ts\"",
+    "lint": "npm run lint:ts",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [

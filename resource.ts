@@ -1,13 +1,13 @@
-export interface Tag {
+export interface ITag {
   count: number;
   name: string;
 }
 
-export interface Resource {
+export interface IResource {
   tgid: string;
   title?: string;
   desc?: string;
-  tags?: Tag[];
+  tags?: ITag[];
   type?: string;
   imgsrc?: string;
 }

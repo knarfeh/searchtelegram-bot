@@ -1,0 +1,17 @@
+version: 2
+jobs:
+  build:
+    working_directory: ~/searchtelegram-bot
+    docker:
+      - image: circleci/node:8.11-stretch
+    steps:
+      - checkout
+      - run:
+          name: pre install
+          command: 'sudo npm install -g tslint typescript@2.6 yarn'
+      - run:
+          name: install-npm-wee
+          command: yarn
+      - run:
+          name: ci
+          command: npm run lint
