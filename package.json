@@ -40,7 +40,9 @@
   "scripts": {
     "lint:ts": "tslint -p . -t stylish --exclude \"{build,node_modules}/**\" \"**/*.ts\"",
     "lint": "npm run lint:ts",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "docs:build": "vuepress build docs",
+    "docs:dev": "vuepress dev docs"
   },
   "keywords": [
     "typescript",

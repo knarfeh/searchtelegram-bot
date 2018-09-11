@@ -44,20 +44,3 @@ export async function searchChannelCmd(ctx: any, server: any) {
   ctx.message.text = `/search ${payload}#channel`
   await searchCmd(ctx, server);
 }
-
-export async function pocCmd(ctx: any, server: any) {
-  const payload = ctx.message.text.replace('/poc ', '').replace('/poc', '');
-  const { result, totalPage } = await getResultByActionRes(ctx, server, 'search', payload, 1)
-
-  if (totalPage === 0) {
-    ctx.reply(result + sigStr)
-  } else if (totalPage === 1) {
-    ctx.reply(result)
-  } else {
-    ctx.reply(result + sigStr, Extra.HTML().markup((m: any) =>
-    m.inlineKeyboard([
-      m.callbackButton('1', 'current_page'),
-      m.callbackButton('>>', `next:search_${payload}-1`)
-    ])));
-  }
-}

@@ -9,12 +9,14 @@ export async function getResultByActionRes(ctx: any, server: any, action: any, r
   }
   const isMemberAsync = promisify(server.redisClient.sismember).bind(server.redisClient);
   const value = await isMemberAsync('redisearch:cached-search-string', payload);
+  // server.redisClient.SADD('status:search-unique-user', ctx.message.from.username);
   if (value === 1) {
     console.log(`value??? ${value}`);
   }
   console.log(`No cache in redis, search in elasticsearch, search str: ${payload}`)
   const splitPayload = payload.split(/#(.+)/)
   const queryString = splitPayload[0]
+  server.redisClient.PUBLISH('st_search', queryString);
   let tagString = ''
   if (splitPayload.length === 3) {
     tagString = '#' + splitPayload[1]

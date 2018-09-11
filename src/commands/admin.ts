@@ -68,8 +68,35 @@ Cached search string: \n${replies[7].toString()}`;
           },
           index: 'telegram'
         });
-        const esResult = `\n\nES Document count: ${docCount.count}
-Tags count: ${tagCount.aggregations['allTags']['doc_count_error_upper_bound']}`;
+        const botCount = await server.esClient.search({
+          body: {post_filter: { bool: { should: [{ terms: { 'tags.name.keyword': ['bot']}}]}}},
+          index: 'telegram',
+          type: 'resource'
+        })
+        const channelCount = await server.esClient.search({
+          body: {post_filter: { bool: { should: [{ terms: { 'tags.name.keyword': ['channel']}}]}}},
+          index: 'telegram',
+          type: 'resource'
+        })
+        const groupCount = await server.esClient.search({
+          body: {post_filter: { bool: { should: [{ terms: { 'tags.name.keyword': ['group']}}]}}},
+          index: 'telegram',
+          type: 'resource'
+        })
+        const peopleCount = await server.esClient.search(
+          {
+            body: {post_filter: { bool: { should: [{ terms: { 'tags.name.keyword': ['people']}}]}}},
+            index: 'telegram',
+            type: 'resource'
+          })
+        const esResult = `
+\nES Document count: ${docCount.count}
+Tags count: ${tagCount.aggregations['allTags']['doc_count_error_upper_bound']}
+Bot count: ${botCount.hits.total}
+Channel count: ${channelCount.hits.total}
+Group count: ${groupCount.hits.total}
+People count: ${peopleCount.hits.total}
+`;
         return ctx.reply(result + esResult);
     });
   ctx.reply(result);
