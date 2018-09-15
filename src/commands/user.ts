@@ -3,7 +3,6 @@ import { emojiDict, sigStr } from '../constants';
 
 export async function starCmd(ctx: any, server: any) {
   const payload = ctx.message.text.replace('/star ', '').replace('/star', '');
-  console.log('TODO: aggragate')
   const getAsync = promisify(server.redisClient.get).bind(server.redisClient);
   const value = await getAsync('tgid:' + payload);
   if (value !== '1') {
@@ -30,22 +29,20 @@ export async function starCmd(ctx: any, server: any) {
   });
 
   const tgBody: {[key: string]: any} = resourceResult['_source'];
+  console.log('tgBody: ');
+  console.dir(tgBody)
   tgBody['star'] = true
-  console.log(`tgBody??? ${tgBody}`)
   await server.esClient.index({
     body: tgBody,
     id: payload,
     index: 'telegram',
     type: `user_${ctx.message.from.username}`
   })
-  console.log('resourceResult???? ', resourceResult['_source']);
-  console.dir('')
-  ctx.reply('Alright')
+  ctx.reply(`OK, checkout your collection with /collection`)
 }
 
 export async function unstarCmd(ctx: any, server: any) {
   const payload = ctx.message.text.replace('/unstar ', '').replace('/unstar', '');
-  console.log('TODO: aggragate')
   const getAsync = promisify(server.redisClient.get).bind(server.redisClient);
   const value = await getAsync('tgid:' + payload);
   if (value !== '1') {
@@ -73,16 +70,13 @@ export async function unstarCmd(ctx: any, server: any) {
 
   const tgBody: {[key: string]: any} = resourceResult['_source'];
   tgBody['star'] = false
-  console.log(`tgBody??? ${tgBody}`)
   await server.esClient.index({
     body: tgBody,
     id: payload,
     index: 'telegram',
     type: `user_${ctx.message.from.username}`
   })
-  console.log('resourceResult???? ', resourceResult['_source']);
-  console.dir('')
-  ctx.reply('Alright')
+  ctx.reply(`OK, checkout your collection with /collection`)
 }
 
 export async function collectionCmd(ctx: any, server: any) {
@@ -91,14 +85,14 @@ export async function collectionCmd(ctx: any, server: any) {
   const resourceResult = await server.esClient.search({
     body: {query: {match_all : {}}},
     index: 'telegram',
-    type: `user_${ctx.message.from_username}`
+    size: 100,
+    type: `user_${ctx.message.from.username}`
   })
   let result = `🎉🎉🎉  Your collection\n\n`
   console.log(`resourceResult: ${resourceResult}`)
   for (const hit of resourceResult.hits.hits) {
     if (hit['_source']['star']) {
-      console.log('star is true')
-      result = result + `@${hit['_id']}\n`
+      result = result + `@${hit['_id']}    /unstar_${hit['_id']} /get_${hit['_id']}\n`
     }
   }
   ctx.reply(result)

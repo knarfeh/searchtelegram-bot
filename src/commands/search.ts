@@ -1,19 +1,19 @@
 import Telegraf from 'telegraf';
 import { promisify } from 'util';
 import { emojiDict, sigStr } from './../constants/tg';
-import { getResultByActionRes } from '../utils/es';
+import { getResultByActionRes } from '../utils/search';
 const Extra = (Telegraf as any).Extra;
 
 export async function searchCmd(ctx: any, server: any) {
   const payload = ctx.message.text.replace('/search ', '').replace('/search', '');
-  const { result, totalPage } = await getResultByActionRes(ctx, server, 'search', payload, 1)
+  const [result, totalPage] = await getResultByActionRes(ctx, server, 'search', payload, 1)
 
   if (totalPage === 0) {
     ctx.reply(result + sigStr)
   } else if (totalPage === 1) {
     ctx.reply(result)
   } else {
-    ctx.reply(result + sigStr, Extra.HTML().markup((m: any) =>
+    ctx.reply(result + sigStr, Extra.HTML().webPreview(false).markup((m: any) =>
     m.inlineKeyboard([
       m.callbackButton('1', 'current_page'),
       m.callbackButton('>>', `next:search_${payload}-1`)

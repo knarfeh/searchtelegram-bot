@@ -1,5 +1,5 @@
 import Telegraf from 'telegraf';
-import { getResultByActionRes } from '../utils/es';
+import { getResultByActionRes } from '../utils/search';
 const Extra = (Telegraf as any).Extra;
 
 async function paginationEditListByCategory(ctx: any, server: any, operator: string, query: string) {
@@ -11,27 +11,27 @@ async function paginationEditListByCategory(ctx: any, server: any, operator: str
   } else if (operator === 'next') {
     thisPage = parseInt(currentPage, 10) + 1
   }
-  const { result, totalPage } = await getResultByActionRes(ctx, server, 'search', resource, thisPage);
+  const [result, totalPage] = await getResultByActionRes(ctx, server, 'search', resource, thisPage);
   if (thisPage < 0 || thisPage > totalPage) {
     return ctx.answerCbQuery('')
   }
   if (thisPage === 1 && thisPage < totalPage) {
-    ctx.editMessageText(result, Extra.HTML().markup((m: any) => m.inlineKeyboard([
+    ctx.editMessageText(result, Extra.webPreview(false).HTML().markup((m: any) => m.inlineKeyboard([
       m.callbackButton(`${thisPage}`, 'current_page'),
       m.callbackButton('>>', `next:${category}-${thisPage}`),
     ])));
   } else if (thisPage === 1 && thisPage >= totalPage) {
-    ctx.editMessageText(result, Extra.HTML().markup((m: any) => m.inlineKeyboard([
+    ctx.editMessageText(result, Extra.webPreview(false).HTML().markup((m: any) => m.inlineKeyboard([
       m.callbackButton(`${thisPage}`, 'current_page'),
     ])));
   } else if (thisPage > 1 && thisPage < totalPage) {
-    ctx.editMessageText(result, Extra.HTML().markup((m: any) => m.inlineKeyboard([
+    ctx.editMessageText(result, Extra.webPreview(false).HTML().markup((m: any) => m.inlineKeyboard([
       m.callbackButton('<<', `prev:${category}-${thisPage}`),
       m.callbackButton(`${thisPage}`, 'current_page'),
       m.callbackButton('>>', `next:${category}-${thisPage}`),
     ])));
   } else if (thisPage > 1 && thisPage >= totalPage) {
-    ctx.editMessageText(result, Extra.HTML().markup((m: any) => m.inlineKeyboard([
+    ctx.editMessageText(result, Extra.webPreview(false).HTML().markup((m: any) => m.inlineKeyboard([
       m.callbackButton('<<', `prev:${category}-${thisPage}`),
       m.callbackButton(`${thisPage}`, 'current_page'),
     ])));

@@ -24,14 +24,14 @@ I will help you search telegram group, channel, bot, people. You can also submit
 /submit [telegramID] Submit new item
   e.g. /submit searchtelegramchannel
 
-/s_channel [channelID] Search channel
-  e.g. /s_channel telegram
+/schannel [channelID] Search channel
+  e.g. /schannel telegram
 
-/s_group [groupID] Search group
-  e.g. /s_group python
+/sgroup [groupID] Search group
+  e.g. /sgroup python
 
-/s_bot [channelID] Search bot
-  e.g. /s_bot picture
+/sbot [channelID] Search bot
+  e.g. /sbot picture
 
 Our website: https://searchtelegram.com
 `)
@@ -62,6 +62,7 @@ export async function getCmd(ctx: any, server: any) {
 @${resourceResult._source['tgid']}
 Description: ${description}
 Tags: ${tagString}
+/star_${resourceResult._source['tgid']}
 ${sigStr}`)
 }
 
@@ -78,7 +79,7 @@ export async function submitCmd(ctx: any, server: any) {
   const getAsync = promisify(server.redisClient.get).bind(server.redisClient);
   const value = await getAsync('tgid:' + payload);
   if (value === '1') {
-    return ctx.reply('Ha, this id already exist, you could get detailed information with /get ' + payload)
+    return ctx.reply('Ha, this id already exist, you could get detailed information with /get_' + payload)
   }
   const tgResource: IResource = {
     tgid: payload,

@@ -6,7 +6,13 @@
     "noImplicitAny": false,
     "removeComments": true,
     "outDir": "./dist/",
-    "pretty": true
+    "pretty": true,
+    "lib": [
+      "es6",
+      "es2016",
+      "dom",
+      "es2015"
+    ]
   },
   "exclude": [
     "node_modules",
