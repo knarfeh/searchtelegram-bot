@@ -4,8 +4,9 @@ import {
   searchCmd, searchGroupCmd, searchPeopleCmd, searchChannelCmd, searchBotCmd,
   startCmd, getCmd, submitCmd, deleteCmd, echoCmd,
   statsCmd, pingCmd, processCallback, starCmd, unstarCmd,
-  collectionCmd
+  collectionCmd, tagsCmd
 } from './src/commands';
+import { allText } from './src/commands/common';
 
 const server = new Server(new Telegraf(process.env.BOT_TOKEN, {
   telegram: { webhookReply: true },
@@ -37,7 +38,7 @@ server.bot.command('collection', async (ctx: any) => { await collectionCmd(ctx, 
 // server.bot.command('top_group', async (ctx: any) => { await topGroupCmd(ctx, server); })
 // server.bot.command('top_group', async (ctx: any) => { await topGroupCmd(ctx, server); })
 // server.bot.command('recent', async (ctx: any) => { await recentCmd(ctx, server); })
-// server.bot.command('tags', async (ctx: any) => { await tagsCmd(ctx, server); })
+server.bot.command('tags', async (ctx: any) => { await tagsCmd(ctx, server); })
 
 // Search command
 server.bot.command('search', async (ctx: any) => { await searchCmd(ctx, server); })
@@ -56,21 +57,4 @@ server.bot.command('echo', (ctx: any) => { echoCmd(ctx, server); })
 server.bot.action(/.+/, async (ctx: any) => { await processCallback(ctx, server); })
 
 // Handle all kinds of text.
-server.bot.on('text', async (ctx: any) => {
-  const payloadList = ctx.message.text.split(/_(.+)/, 2)
-  if (payloadList.length === 2) {
-    const fnMap = {
-      '/get': getCmd,
-      '/star': starCmd,
-      '/submit': submitCmd,
-      '/unstar': unstarCmd
-    };
-    if (Object.keys(fnMap).includes(payloadList[0])) {
-      ctx.message.text = `${payloadList[1]}`
-      await fnMap[`${payloadList[0]}`](ctx, server)
-      return
-    }
-  }
-  ctx.message.text = `/search ${ctx.message.text}`
-  await searchCmd(ctx, server);
-})
+server.bot.on('text', async (ctx: any) => { await allText(ctx, server); })

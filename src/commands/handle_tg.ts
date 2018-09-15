@@ -56,7 +56,7 @@ export async function getCmd(ctx: any, server: any) {
 
   let tagString = '';
   for (const item of resourceResult._source['tags']) {
-    tagString = tagString + '#' + item['name'] + ''
+    tagString = tagString + '#' + item['name'] + ' '
   }
   return ctx.reply(`\n${emojiDict[resourceResult._source['type']]}\n
 @${resourceResult._source['tgid']}
