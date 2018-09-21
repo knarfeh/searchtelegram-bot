@@ -23,6 +23,7 @@
     "no-namespace": false,
     "no-trailing-whitespace": true,
     "no-unused-expression": true,
+    "no-submodule-imports": false,
     "one-line": [true,
       "check-open-brace",
       "check-catch",

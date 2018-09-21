@@ -16,7 +16,7 @@ async function paginationEditListByCategory(ctx: any, server: any, operator: str
     return ctx.answerCbQuery('')
   }
   if (thisPage === 1 && thisPage < totalPage) {
-    ctx.editMessageText(result, Extra.webPreview(false).HTML().markup((m: any) => m.inlineKeyboard([
+    await ctx.editMessageText(result, Extra.webPreview(false).HTML().markup((m: any) => m.inlineKeyboard([
       m.callbackButton(`${thisPage}`, 'current_page'),
       m.callbackButton('>>', `next:${category}-${thisPage}`),
     ])));
@@ -25,13 +25,13 @@ async function paginationEditListByCategory(ctx: any, server: any, operator: str
       m.callbackButton(`${thisPage}`, 'current_page'),
     ])));
   } else if (thisPage > 1 && thisPage < totalPage) {
-    ctx.editMessageText(result, Extra.webPreview(false).HTML().markup((m: any) => m.inlineKeyboard([
+    await ctx.editMessageText(result, Extra.webPreview(false).HTML().markup((m: any) => m.inlineKeyboard([
       m.callbackButton('<<', `prev:${category}-${thisPage}`),
       m.callbackButton(`${thisPage}`, 'current_page'),
       m.callbackButton('>>', `next:${category}-${thisPage}`),
     ])));
   } else if (thisPage > 1 && thisPage >= totalPage) {
-    ctx.editMessageText(result, Extra.webPreview(false).HTML().markup((m: any) => m.inlineKeyboard([
+    await ctx.editMessageText(result, Extra.webPreview(false).HTML().markup((m: any) => m.inlineKeyboard([
       m.callbackButton('<<', `prev:${category}-${thisPage}`),
       m.callbackButton(`${thisPage}`, 'current_page'),
     ])));

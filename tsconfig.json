@@ -18,6 +18,9 @@
     "node_modules",
     "dist/node_modules"
   ],
+  "include": [
+    "./src/**/*.ts"
+  ],
   "typeRoots": [
     "node_modules/@types"
     ]

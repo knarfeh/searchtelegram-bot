@@ -1,10 +1,9 @@
 {
   "name": "searchtelegram-bot",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "version": "0.0.2",
+  "description": "Telegram bot that searches telegram bot, channel, public group",
+  "main": "node dist/src/index.js",
   "dependencies": {
-    "@types/elasticsearch": "^5.0.26",
     "body-parser": "^1.15.2",
     "bodybuilder": "^2.2.15",
     "compression": "^1.6.2",
@@ -19,6 +18,7 @@
     "telegraf": "^3.23.0"
   },
   "devDependencies": {
+    "@types/elasticsearch": "^5.0.26",
     "@types/dotenv": "^4.0.3",
     "@types/redis": "^2.8.6",
     "@types/body-parser": "^1.16.8",
@@ -51,5 +51,8 @@
     "docker"
   ],
   "author": "knarfeh",
-  "license": "AGPLv3"
+  "license": "AGPLv3",
+  "bugs": {
+    "url": "https://github.com/knarfeh/searchtelegram-bot/issues"
+  }
 }

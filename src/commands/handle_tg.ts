@@ -1,6 +1,8 @@
+import Telegraf from 'telegraf';
 import { promisify } from 'util';
 import { emojiDict, sigStr } from '../constants';
-import { IResource } from '../../resource';
+import { IResource } from '../resource';
+const Extra = (Telegraf as any).Extra;
 
 export async function startCmd(ctx: any, server: any) {
   const payload = ctx.message.text.replace('/start ', '').replace('/start', '');
@@ -32,9 +34,13 @@ I will help you search telegram group, channel, bot, people. You can also submit
 
 /sbot [channelID] Search bot
   e.g. /sbot picture
-
-Our website: https://searchtelegram.com
-`)
+`, Extra.HTML().webPreview(false).markup((m: any) =>
+    m.inlineKeyboard([
+      m.urlButton('🌐 ', 'https://searchtelegram.com'),
+      m.urlButton('📢 ', 'https://t.me/SearchTelegramChannel'),
+      m.urlButton('👥 ', 'https://t.me/SearchTelegramGroup')
+    ]))
+  )
 }
 
 export async function getCmd(ctx: any, server: any) {
@@ -96,3 +102,39 @@ export async function submitCmd(ctx: any, server: any) {
 
 // export async function startCmd(ctx: any, server: any) {
 // }
+
+export async function pocgetCmd(ctx: any, server: any) {
+  const payload = ctx.message.text.replace('/pocget ', '').replace('/pocget', '');
+  console.log('Add get unique user');
+  server.redisClient.SADD('statu:get-unique-user', ctx.message.from.username)
+  const getAsync = promisify(server.redisClient.get).bind(server.redisClient);
+  const value = await getAsync('tgid:' + payload);
+  if (value !== '1') {
+    return ctx.reply('Ops, this id does not exist, perhaps you could submit with /submit ' + payload)
+  }
+  const resourceResult: any = await server.esClient.get({
+    id: payload,
+    index: 'telegram',
+    type: 'resource'
+  });
+  let description = '';
+  description = (resourceResult._source['desc'] === '') ? 'None' : resourceResult._source['desc'];
+
+  let tagString = '';
+  for (const item of resourceResult._source['tags']) {
+    tagString = tagString + '#' + item['name'] + ' '
+  }
+  return ctx.reply(`\n${emojiDict[resourceResult._source['type']]}\n
+@${resourceResult._source['tgid']}
+Description: ${description}
+Tags: ${tagString}
+/star_${resourceResult._source['tgid']}
+${sigStr}`, Extra.HTML().webPreview(false).markup((m: any) =>
+  m.inlineKeyboard([
+    m.callbackButton('👍', `thumb_up_${resourceResult._source['tgid']}`),
+    m.callbackButton('💬', 'TODO'),
+    m.callbackButton('⭐', `star_${resourceResult._source['tgid']}`),
+    m.callbackButton('🚫404', 'TODO'),
+    m.callbackButton('🏷️', 'TODO'),
+  ])))
+}

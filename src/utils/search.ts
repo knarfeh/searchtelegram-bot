@@ -1,16 +1,18 @@
 import { promisify } from 'util';
 import { emojiDict, sigStr, itemPerPage, noTgResponse } from '../constants/tg';
-import { IResource } from '../../resource';
+import { IResource } from '../resource';
 
 export async function getResultByActionRes(ctx: any, server: any, action: any, resource: any, thisPage: any) {
   const payload = resource
   let totalPage = 0;
   let result = '';
+  console.log(`getResultByActionRes, payload: ${payload}`)
   if (payload === undefined || payload === null || payload === '') {
-    ctx.reply('Please input string for searching (e.g., /search telegram)');
+    ctx.reply('Ok, tell me what are you searching for');
     return
   }
-  if (payload === '*') {
+  // if (payload === '*') {
+  if (['*', '*#channel', '*#bot', '*#group'].indexOf(payload) > -1) {
     result = noTgResponse;
     totalPage = 0;
     return [noTgResponse, totalPage];
@@ -19,7 +21,7 @@ export async function getResultByActionRes(ctx: any, server: any, action: any, r
   const value = await isMemberAsync('redisearch:cached-search-string', payload);
   // server.redisClient.SADD('status:search-unique-user', ctx.message.from.username);
   if (value === 1) {
-    console.log(`value??? ${value}`);
+    console.log(`${payload} is cached search string`);
   }
   console.log(`No cache in redis, search in elasticsearch, search str: ${payload}`)
   const splitPayload = payload.split(/#(.+)/)

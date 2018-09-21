@@ -1,16 +1,27 @@
 import Telegraf from 'telegraf'
 import Server from './server';
 import {
-  searchCmd, searchGroupCmd, searchPeopleCmd, searchChannelCmd, searchBotCmd,
+  searchCmd, searchPeopleCmd,
   startCmd, getCmd, submitCmd, deleteCmd, echoCmd,
   statsCmd, pingCmd, processCallback, starCmd, unstarCmd,
-  collectionCmd, tagsCmd
-} from './src/commands';
-import { allText } from './src/commands/common';
+  collectionCmd, tagsCmd, pocgetCmd
+} from './commands';
+import * as Stage from 'telegraf/stage';
+import * as Scene from 'telegraf/scenes/base';
+import * as session from 'telegraf/session';
+// import {SCENES} from './scenes';
+const enter = Stage.enter
+import { allText } from './commands/common';
+import { sgroupScene, sbotScene, schannelScene } from './stages';
 
-const server = new Server(new Telegraf(process.env.BOT_TOKEN, {
+export const server = new Server(new Telegraf(process.env.BOT_TOKEN, {
   telegram: { webhookReply: true },
 }));
+
+const stage = new Stage([sgroupScene, sbotScene, schannelScene], { ttl: 30 })
+
+server.bot.use(session())
+server.bot.use(stage.middleware())
 
 server.bot.command('start', (ctx: any) => { startCmd(ctx, server); })
 // server.bot.command('help', (ctx: any) => { helpCmd(ctx, server); })
@@ -18,6 +29,7 @@ server.bot.command('start', (ctx: any) => { startCmd(ctx, server); })
 // Handle telegram resource
 server.bot.command('submit', async (ctx: any) => { await submitCmd(ctx, server); })
 server.bot.command('get', async (ctx: any) => { await getCmd(ctx, server); })
+server.bot.command('pocget', async (ctx: any) => { await pocgetCmd(ctx, server); })
 // server.bot.command('vote', async (ctx: any) => { await voteCmd(ctx, server); })
 
 // User
@@ -33,6 +45,7 @@ server.bot.command('collection', async (ctx: any) => { await collectionCmd(ctx, 
 // server.bot.command('set_lang', async (ctx: any) => { await setCmd(ctx, server); })
 
 // explore
+// server.bot.command('top', async (ctx: any) => { await topCmd(ctx, server); })
 // server.bot.command('top_bot', async (ctx: any) => { await topBotCmd(ctx, server); })
 // server.bot.command('top_channel', async (ctx: any) => { await topChannelCmd(ctx, server); })
 // server.bot.command('top_group', async (ctx: any) => { await topGroupCmd(ctx, server); })
@@ -42,10 +55,10 @@ server.bot.command('tags', async (ctx: any) => { await tagsCmd(ctx, server); })
 
 // Search command
 server.bot.command('search', async (ctx: any) => { await searchCmd(ctx, server); })
-server.bot.command('sbot', async (ctx: any) => { await searchBotCmd(ctx, server); })
-server.bot.command('sgroup', async (ctx: any) => { await searchGroupCmd(ctx, server); })
+server.bot.command('sbot', enter('sbot'))
+server.bot.command('sgroup', enter('sgroup'));
+server.bot.command('schannel', enter('schannel'))
 server.bot.command('speople', async (ctx: any) => { await searchPeopleCmd(ctx, server); })
-server.bot.command('schannel', async (ctx: any) => { await searchChannelCmd(ctx, server); })
 
 // Private. Gathering server info
 server.bot.command('delete', async (ctx: any) => { await deleteCmd(ctx, server); })

@@ -2,6 +2,7 @@ import * as express from 'express'; /* ts-diable */
 import * as elasticsearch from 'elasticsearch';
 import * as redis from 'redis';
 import { url } from './config/config';
+// import { url}
 const redsearch = require('redredisearch'); /* ts-diable */
 
 const WEBHOOK_PATH = process.env.WEBHOOK_PATH;

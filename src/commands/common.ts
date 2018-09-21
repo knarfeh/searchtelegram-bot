@@ -9,6 +9,7 @@ export async function allText(ctx: any, server: any) {
   if (payloadList.length === 2) {
     const fnMap = {
       '/get': getCmd,
+      '/search': searchCmd,
       '/star': starCmd,
       '/submit': submitCmd,
       '/unstar': unstarCmd
@@ -18,9 +19,6 @@ export async function allText(ctx: any, server: any) {
       await fnMap[`${payloadList[0]}`](ctx, server)
       return
     }
-  }
-  if (ctx.message.text.startsWith('#')) {
-    ctx.message.text = '*' + ctx.message.text;
   }
   ctx.message.text = `/search ${ctx.message.text}`;
   await searchCmd(ctx, server);

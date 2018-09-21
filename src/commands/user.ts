@@ -83,7 +83,7 @@ export async function collectionCmd(ctx: any, server: any) {
   // const payload = ctx.message.text.replace('/collection ', '').replace('/star', '');
   console.log('TODO: aggragate');
   const resourceResult = await server.esClient.search({
-    body: {query: {match_all : {}}},
+    body: { query: { term : { star : true }}},
     index: 'telegram',
     size: 100,
     type: `user_${ctx.message.from.username}`

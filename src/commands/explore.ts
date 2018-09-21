@@ -32,13 +32,12 @@ export async function tagsCmd(ctx: any, server: any) {
     index: 'telegram',
     type: 'resource'
   });
-  console.log('tagsResult')
-  console.dir(tagsResult)
   const tagsList = []
   for (const item of tagsResult.aggregations.tags.result['buckets']) {
-    tagsList.push('#' + item['key']);
+    if (['channel', 'bot', 'group'].indexOf(item['key']) === -1) {
+      tagsList.push('#' + item['key']);
+    }
   }
-  console.log('tagsList??? ', tagsList);
   return ctx.reply('Let me know what tag you want 😜', Extra.markup((m: any) =>
     m.keyboard(tagsList, {
       wrap: (btn, index, currentRow) => currentRow.length === 4
