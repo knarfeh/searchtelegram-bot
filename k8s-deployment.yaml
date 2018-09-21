@@ -1,0 +1,52 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  labels:
+    run: searchtelegrambotprod
+  name: searchtelegrambotprod
+  namespace: searchtelegram
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      run: searchtelegrambotprod
+  template:
+    metadata:
+      labels:
+        run: searchtelegrambotprod
+    spec:
+      containers:
+      - name: searchtelegrambotprod
+        image: daocloud.io/knarfeh/searchtelegram-bot
+        imagePullPolicy: IfNotPresent
+        env:
+          - name: OPENSHIFT_NODEJS_PORT
+            value: "80"
+          - name: OPENSHIFT_NODEJS_IP
+            value: "0.0.0.0"
+          - name: BOT_TOKEN
+            valueFrom:
+              secretKeyRef:
+                name: prodsearchtelegramsecret
+                key: TGBOTTOKEN
+          - name: WEBHOOK_DOMAIN
+            value: "searchtelegram.com"
+          - name: WEBHOOK_PATH
+            value: "/v1/tgbot_webhook"
+          - name: REDIS_HOST
+            value: "gryuint.nujeh.com"
+          - name: REDIS_PORT
+            valueFrom:
+              configMapKeyRef:
+                name: st-var
+                key: REDIS_PORT
+          - name: ES_HOST_PORT
+            valueFrom:
+              configMapKeyRef:
+                name: st-var
+                key: ES_HOST_PORT
+        ports:
+          - containerPort: 80
+            protocol: TCP
+      imagePullSecrets:
+        - name: daocloud
