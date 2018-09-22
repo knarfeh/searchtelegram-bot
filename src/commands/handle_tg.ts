@@ -6,7 +6,7 @@ const Extra = (Telegraf as any).Extra;
 
 export async function startCmd(ctx: any, server: any) {
   const payload = ctx.message.text.replace('/start ', '').replace('/start', '');
-  server.redisClient.SADD('status:unique-user', ctx.message.from.username)
+  server.redisClient.SADD('stats:unique-user', ctx.message.from.username)
   console.log(`[start]sender: ${ctx.message.from.username}, payload: ${payload}\n`)
   ctx.reply(`
 🇬🇧
@@ -46,8 +46,10 @@ I will help you search telegram group, channel, bot, people. You can also submit
 export async function getCmd(ctx: any, server: any) {
   const payload = ctx.message.text.replace('/get ', '').replace('/get', '');
   console.log('Add get unique user');
-  server.redisClient.SADD('statu:get-unique-user', ctx.message.from.username)
+  server.redisClient.SADD('stats:get-unique-user', ctx.message.from.username)
   const getAsync = promisify(server.redisClient.get).bind(server.redisClient);
+  const sismemberAsync = promisify(server.redisClient.sismember).bind(server.redisClient);
+  const scardAsync = promisify(server.redisClient.scard).bind(server.redisClient);
   const value = await getAsync('tgid:' + payload);
   if (value !== '1') {
     return ctx.reply('Ops, this id does not exist, perhaps you could submit with /submit ' + payload)
@@ -59,24 +61,50 @@ export async function getCmd(ctx: any, server: any) {
   });
   let description = '';
   description = (resourceResult._source['desc'] === '') ? 'None' : resourceResult._source['desc'];
-
   let tagString = '';
   for (const item of resourceResult._source['tags']) {
     tagString = tagString + '#' + item['name'] + ' '
   }
+
+  let thumupIcon = '👍';
+  let thumupInfo = `thumbup_${resourceResult._source['tgid']}`;
+  const thumbIsMember = await sismemberAsync(`thumbup:${resourceResult._source['tgid']}`, ctx.message.from.username);
+  if (thumbIsMember === 1) {
+    thumupIcon = '👍 (' + (parseInt(await scardAsync(`thumbup:${resourceResult._source['tgid']}`), 10)).toString() + ')';
+    thumupInfo = `unthumbup_${resourceResult._source['tgid']}`;
+  }
+  let starIcon = '⭐';
+  let starInfo = `star_${resourceResult._source['tgid']}`
+  const sisememberresult = await sismemberAsync(`star:${ctx.message.from.username}`, resourceResult._source['tgid']);
+  console.log('sismember result: ', sisememberresult)
+  if (sisememberresult === 1) {
+    starIcon = '✅'
+    starInfo = `unstar_${resourceResult._source['tgid']}`
+  }
+
   return ctx.reply(`\n${emojiDict[resourceResult._source['type']]}\n
 @${resourceResult._source['tgid']}
-Description: ${description}
-Tags: ${tagString}
+<b>Description</b>: ${description}
+<b>Tags</b>: ${tagString}
 /star_${resourceResult._source['tgid']}
-${sigStr}`)
+`, Extra.HTML(true).webPreview(false).markup((m: any) =>
+    m.inlineKeyboard([
+      m.urlButton('🌐 ', `https://t.me/${resourceResult._source['tgid']}`),
+      // m.callbackButton(starIcon, starInfo),
+      m.callbackButton(thumupIcon, thumupInfo),
+      // m.callbackButton('💬', 'TODO'),
+      m.callbackButton(starIcon, starInfo),
+      // m.callbackButton('🚫404', `notfound_${resourceResult._source['tgid']}`),
+      // m.callbackButton('🏷️', 'TODO'),
+    ])
+  ))
 }
 
 export async function submitCmd(ctx: any, server: any) {
   const payload = ctx.message.text.replace('/submit ', '').replace('/submit', '');
   console.log(`[submit]sender: ${ctx.message.from.username}, user id: ${ctx.message.from.id}, payload: ${payload}`)
   console.log('Add submit unique user');
-  server.redisClient.SADD('statu:submit-unique-user', ctx.message.from.username)
+  server.redisClient.SADD('stats:submit-unique-user', ctx.message.from.username)
   if (payload === undefined || payload === null || payload === '') {
     const result = 'Please input telegram ID(e.g., /submit telegram)'
     ctx.reply(result);
@@ -102,39 +130,3 @@ export async function submitCmd(ctx: any, server: any) {
 
 // export async function startCmd(ctx: any, server: any) {
 // }
-
-export async function pocgetCmd(ctx: any, server: any) {
-  const payload = ctx.message.text.replace('/pocget ', '').replace('/pocget', '');
-  console.log('Add get unique user');
-  server.redisClient.SADD('statu:get-unique-user', ctx.message.from.username)
-  const getAsync = promisify(server.redisClient.get).bind(server.redisClient);
-  const value = await getAsync('tgid:' + payload);
-  if (value !== '1') {
-    return ctx.reply('Ops, this id does not exist, perhaps you could submit with /submit ' + payload)
-  }
-  const resourceResult: any = await server.esClient.get({
-    id: payload,
-    index: 'telegram',
-    type: 'resource'
-  });
-  let description = '';
-  description = (resourceResult._source['desc'] === '') ? 'None' : resourceResult._source['desc'];
-
-  let tagString = '';
-  for (const item of resourceResult._source['tags']) {
-    tagString = tagString + '#' + item['name'] + ' '
-  }
-  return ctx.reply(`\n${emojiDict[resourceResult._source['type']]}\n
-@${resourceResult._source['tgid']}
-Description: ${description}
-Tags: ${tagString}
-/star_${resourceResult._source['tgid']}
-${sigStr}`, Extra.HTML().webPreview(false).markup((m: any) =>
-  m.inlineKeyboard([
-    m.callbackButton('👍', `thumb_up_${resourceResult._source['tgid']}`),
-    m.callbackButton('💬', 'TODO'),
-    m.callbackButton('⭐', `star_${resourceResult._source['tgid']}`),
-    m.callbackButton('🚫404', 'TODO'),
-    m.callbackButton('🏷️', 'TODO'),
-  ])))
-}

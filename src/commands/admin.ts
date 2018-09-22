@@ -24,7 +24,7 @@ export function pingCmd(ctx: any, server: any) {
     return;
   };
   const payload = ctx.message.text.replace('/ping ', '').replace('/ping', '');
-  server.redisClient.SADD('statu:ping-unique-user', ctx.message.from.username)
+  server.redisClient.SADD('stats:ping-unique-user', ctx.message.from.username)
   console.log(`ping ${ctx.message.from.username}`);
   ctx.reply(`pong ${payload}`);
 }
@@ -37,13 +37,13 @@ export function statsCmd(ctx: any, server: any) {
   let result = '';
   // process.nextTick( () => {});
   server.redisClient.multi()
-    .scard('status:unique-user')
-    .scard('status:search-unique-user')
-    .scard('status:get-unique-user')
-    .scard('status:submit-unique-user')
-    .scard('status:ping-unique-user')
-    .scard('status:echo-unique-user')
-    .scard('status:status-unique-user')
+    .scard('stats:unique-user')
+    .scard('stats:search-unique-user')
+    .scard('stats:get-unique-user')
+    .scard('stats:submit-unique-user')
+    .scard('stats:ping-unique-user')
+    .scard('stats:echo-unique-user')
+    .scard('stats:stats-unique-user')
     .smembers('redisearch:cached-search-string')
     .exec(async (err: any, replies: any) => {
         const redisResult = `Unique user: ${replies[0].toString()}
@@ -52,7 +52,7 @@ Unique user who input /get: ${replies[2].toString()};
 Unique user who input /submit: ${replies[3].toString()};
 Unique user who input /ping: ${replies[4].toString()};
 Unique user who input /echo: ${replies[5].toString()};
-Unique user who input /status: ${replies[6].toString()};
+Unique user who input /stats: ${replies[6].toString()};
 Cached search string: \n${replies[7].toString()}`;
         result = redisResult;
         const docCount  = await server.esClient.count({
@@ -107,6 +107,6 @@ export function echoCmd(ctx: any, server: any) {
     return ctx.reply(`Sorry, but you don't have sufficient permissions.`)
   };
   const payload = ctx.message.text.replace('/echo ', '').replace('/echo', '');
-  server.redisClient.SADD('statu:echo-unique-user', ctx.message.from.username)
+  server.redisClient.SADD('stats:echo-unique-user', ctx.message.from.username)
   ctx.reply(payload)
 }

@@ -24,7 +24,6 @@ schannelScene.command('exit', leave())
 schannelScene.hears('Cancel', leave())
 schannelScene.leave((ctx) => ctx.reply('Bye'))
 schannelScene.on('text', async (ctx: any) => {
-  ctx.reply(ctx.message.text);
   ctx.message.text = `/search ${ctx.message.text}#channel`
   await searchCmd(ctx, server);
 })

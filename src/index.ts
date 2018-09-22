@@ -4,12 +4,11 @@ import {
   searchCmd, searchPeopleCmd,
   startCmd, getCmd, submitCmd, deleteCmd, echoCmd,
   statsCmd, pingCmd, processCallback, starCmd, unstarCmd,
-  collectionCmd, tagsCmd, pocgetCmd
+  collectionCmd, tagsCmd, thumbupCallback, unthumbupCallback,
+  notfoundCallback, starCallback, unstarCallback
 } from './commands';
 import * as Stage from 'telegraf/stage';
-import * as Scene from 'telegraf/scenes/base';
 import * as session from 'telegraf/session';
-// import {SCENES} from './scenes';
 const enter = Stage.enter
 import { allText } from './commands/common';
 import { sgroupScene, sbotScene, schannelScene } from './stages';
@@ -17,8 +16,7 @@ import { sgroupScene, sbotScene, schannelScene } from './stages';
 export const server = new Server(new Telegraf(process.env.BOT_TOKEN, {
   telegram: { webhookReply: true },
 }));
-
-const stage = new Stage([sgroupScene, sbotScene, schannelScene], { ttl: 30 })
+const stage = new Stage([sgroupScene, sbotScene, schannelScene], { ttl: 15 })
 
 server.bot.use(session())
 server.bot.use(stage.middleware())
@@ -29,7 +27,7 @@ server.bot.command('start', (ctx: any) => { startCmd(ctx, server); })
 // Handle telegram resource
 server.bot.command('submit', async (ctx: any) => { await submitCmd(ctx, server); })
 server.bot.command('get', async (ctx: any) => { await getCmd(ctx, server); })
-server.bot.command('pocget', async (ctx: any) => { await pocgetCmd(ctx, server); })
+// server.bot.command('pocget', async (ctx: any) => { await pocgetCmd(ctx, server); })
 // server.bot.command('vote', async (ctx: any) => { await voteCmd(ctx, server); })
 
 // User
@@ -67,6 +65,11 @@ server.bot.command('stats', async (ctx: any) => { await statsCmd(ctx, server); }
 server.bot.command('echo', (ctx: any) => { echoCmd(ctx, server); })
 
 // callback
+server.bot.action(/notfound_(.+)/, async (ctx: any) => { await notfoundCallback(ctx, server); })
+server.bot.action(/unthumbup_(.+)/, async (ctx: any) => { await unthumbupCallback(ctx, server); })
+server.bot.action(/thumbup_(.+)/, async (ctx: any) => { await thumbupCallback(ctx, server); })
+server.bot.action(/unstar_(.+)/, async (ctx: any) => { await unstarCallback(ctx, server); })
+server.bot.action(/star_(.+)/, async (ctx: any) => { await starCallback(ctx, server); })
 server.bot.action(/.+/, async (ctx: any) => { await processCallback(ctx, server); })
 
 // Handle all kinds of text.

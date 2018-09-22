@@ -6,7 +6,6 @@ export const emojiDict: { [key: string]: string; } = {
 };
 
 export const sigStr = `
-
 By searchtelegram
 🤖 @SearchTelegramdotcomBot Telegram indexing service
 📢 @SearchTelegramChannel SearchTelegram updates
@@ -14,4 +13,6 @@ By searchtelegram
 
 export const itemPerPage = 5;
 
-export const noTgResponse = `😱 Sorry, but we don't find any result`;
+export const noTgResponse = `😱 Sorry, but we don't find any result\n`;
+
+export const resultLine = `----------------------------------------------------------`;
