@@ -15,11 +15,11 @@ export async function searchCmd(ctx: any, server: any) {
   const [result, totalPage] = await getResultByActionRes(ctx, server, 'search', payload, 1)
 
   if (totalPage === 0) {
-    ctx.reply(result + sigStr)
+    ctx.reply(result + sigStr, Extra.HTML(true).webPreview(false))
   } else if (totalPage === 1) {
-    ctx.reply(result)
+    ctx.reply(result, Extra.HTML(true).webPreview(false))
   } else {
-    ctx.reply(result + sigStr, Extra.HTML().webPreview(false).markup((m: any) =>
+    ctx.reply(result + sigStr, Extra.HTML(true).webPreview(false).markup((m: any) =>
       m.inlineKeyboard([
         m.urlButton('🌐 ', 'https://searchtelegram.com'),
         m.urlButton('📢 ', 'https://t.me/SearchTelegramChannel'),

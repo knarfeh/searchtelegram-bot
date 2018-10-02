@@ -24,7 +24,6 @@ sbotScene.command('exit', leave())
 sbotScene.hears('Cancel', leave())
 sbotScene.leave((ctx) => ctx.reply('Bye'))
 sbotScene.on('text', async (ctx: any) => {
-  ctx.reply(ctx.message.text);
   ctx.message.text = `/search ${ctx.message.text}#bot`
   await searchCmd(ctx, server);
 })

@@ -24,7 +24,6 @@ sgroupScene.command('exit', leave())
 sgroupScene.hears('Cancel', leave())
 sgroupScene.leave((ctx) => ctx.reply('Bye'))
 sgroupScene.on('text', async (ctx: any) => {
-  ctx.reply(ctx.message.text);
   ctx.message.text = `/search ${ctx.message.text}#group`
   await searchCmd(ctx, server);
 })

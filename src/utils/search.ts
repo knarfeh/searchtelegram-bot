@@ -1,5 +1,5 @@
 import { promisify } from 'util';
-import { emojiDict, sigStr, itemPerPage, noTgResponse } from '../constants/tg';
+import { emojiDict, sigStr, itemPerPage, noTgResponse, resultLine } from '../constants/tg';
 import { IResource } from '../resource';
 
 export async function getResultByActionRes(ctx: any, server: any, action: any, resource: any, thisPage: any) {
@@ -19,7 +19,7 @@ export async function getResultByActionRes(ctx: any, server: any, action: any, r
   }
   const isMemberAsync = promisify(server.redisClient.sismember).bind(server.redisClient);
   const value = await isMemberAsync('redisearch:cached-search-string', payload);
-  // server.redisClient.SADD('status:search-unique-user', ctx.message.from.username);
+  server.redisClient.SADD('stats:search-unique-user', ctx.message.from.id);
   if (value === 1) {
     console.log(`${payload} is cached search string`);
   }
@@ -69,9 +69,9 @@ export async function getResultByActionRes(ctx: any, server: any, action: any, r
     index: 'telegram',
     type: 'resource',
   });
-  result = `🎉🎉🎉  ${resourceResults.hits.total} results\n\n`
+  result = `🎉🎉🎉  ${resourceResults.hits.total} results\n${resultLine}\n\n`
   if (resourceResults.hits.total === 1) {
-    result = `🎉🎉🎉  ${resourceResults.hits.total} result\n\n`
+    result = `🎉🎉🎉  ${resourceResults.hits.total} result\n${resultLine}\n\n`
   }
   if (resourceResults.hits.total === 0) {
     result = noTgResponse;
@@ -79,7 +79,7 @@ export async function getResultByActionRes(ctx: any, server: any, action: any, r
       tgid: queryString,
     }
     const tgResourceString = JSON.stringify(tgResource);
-    console.log(`Telegram, ${ctx.message.from.username} submit resource: ${tgResourceString}\n`)
+    console.log(`Telegram, ${ctx.message.from.username}/${ctx.message.from.id} submit resource: ${tgResourceString}\n`)
     server.redisClient.PUBLISH('st_submit', '1');
     server.redisClient.LPUSH('st_submit_list', tgResourceString);
   }
@@ -90,9 +90,9 @@ export async function getResultByActionRes(ctx: any, server: any, action: any, r
     for (const item of hit['_source']['tags']) {
       resTagString = resTagString + '#' + item['name'] + ' '
     }
-    const hitStr = `${emojiDict[hit['_source']['type']]} @${hit['_id']}
-Description: ${description}
-Tags: ${resTagString}
+    const hitStr = `${emojiDict[hit['_source']['type']]} @${hit['_id']}  ${hit['_source']['title']}
+<b>Description</b>: ${description}
+<b>Tags</b>: ${resTagString}
 /get_${hit['_id']}
 
 `
