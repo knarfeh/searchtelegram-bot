@@ -24,8 +24,8 @@ export function pingCmd(ctx: any, server: any) {
     return;
   };
   const payload = ctx.message.text.replace('/ping ', '').replace('/ping', '');
-  server.redisClient.SADD('stats:ping-unique-user', ctx.message.from.username)
-  console.log(`ping ${ctx.message.from.username}`);
+  server.redisClient.SADD('stats:ping-unique-user', ctx.message.from.id)
+  console.log(`ping ${ctx.message.from.username}/${ctx.message.from.id}`);
   ctx.reply(`pong ${payload}`);
 }
 
@@ -34,6 +34,7 @@ export function statsCmd(ctx: any, server: any) {
     ctx.reply(`Sorry, but you don't have sufficient permissions.`)
     return;
   };
+  server.redisClient.SADD('stats:stats-unique-user', ctx.message.from.id)
   let result = '';
   // process.nextTick( () => {});
   server.redisClient.multi()
@@ -56,7 +57,8 @@ Unique user who input /stats: ${replies[6].toString()};
 Cached search string: \n${replies[7].toString()}`;
         result = redisResult;
         const docCount  = await server.esClient.count({
-          index: 'telegram'
+          index: 'telegram',
+          type: 'resource'
         });
         const tagCount = await server.esClient.search({
           body: {
@@ -107,6 +109,6 @@ export function echoCmd(ctx: any, server: any) {
     return ctx.reply(`Sorry, but you don't have sufficient permissions.`)
   };
   const payload = ctx.message.text.replace('/echo ', '').replace('/echo', '');
-  server.redisClient.SADD('stats:echo-unique-user', ctx.message.from.username)
+  server.redisClient.SADD('stats:echo-unique-user', ctx.message.from.id)
   ctx.reply(payload)
 }

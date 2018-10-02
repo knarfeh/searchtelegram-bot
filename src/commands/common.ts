@@ -6,7 +6,6 @@ import { searchCmd } from './search';
 
 export async function allText(ctx: any, server: any) {
   const payloadList = ctx.message.text.split(/_(.+)/, 2)
-  console.log('wft is payloadList???')
   console.dir(payloadList)
   if (payloadList.length === 2) {
     const fnMap = {

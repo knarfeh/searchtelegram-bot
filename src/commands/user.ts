@@ -4,12 +4,12 @@ import { starTG, unstarTG } from '../utils';
 
 export async function starCmd(ctx: any, server: any) {
   const payload = ctx.message.text.replace('/star ', '').replace('/star', '');
-  await starTG(ctx, server, payload, ctx.message.from.username);
+  await starTG(ctx, server, payload, ctx.message.from.id);
 }
 
 export async function unstarCmd(ctx: any, server: any) {
   const payload = ctx.message.text.replace('/unstar ', '').replace('/unstar', '');
-  await unstarTG(ctx, server, payload, ctx.message.from.username);
+  await unstarTG(ctx, server, payload, ctx.message.from.id);
 }
 
 export async function collectionCmd(ctx: any, server: any) {
@@ -19,7 +19,7 @@ export async function collectionCmd(ctx: any, server: any) {
     body: { query: { term : { star : true }}},
     index: 'telegram',
     size: 100,
-    type: `user_${ctx.message.from.username}`
+    type: `user_${ctx.message.from.id}`
   })
   let result = `🎉🎉🎉  Your collection\n\n`
   console.log(`resourceResult: ${resourceResult}`)

@@ -19,7 +19,7 @@ export async function getResultByActionRes(ctx: any, server: any, action: any, r
   }
   const isMemberAsync = promisify(server.redisClient.sismember).bind(server.redisClient);
   const value = await isMemberAsync('redisearch:cached-search-string', payload);
-  // server.redisClient.SADD('stats:search-unique-user', ctx.message.from.username);
+  server.redisClient.SADD('stats:search-unique-user', ctx.message.from.id);
   if (value === 1) {
     console.log(`${payload} is cached search string`);
   }
@@ -79,7 +79,7 @@ export async function getResultByActionRes(ctx: any, server: any, action: any, r
       tgid: queryString,
     }
     const tgResourceString = JSON.stringify(tgResource);
-    console.log(`Telegram, ${ctx.message.from.username} submit resource: ${tgResourceString}\n`)
+    console.log(`Telegram, ${ctx.message.from.username}/${ctx.message.from.id} submit resource: ${tgResourceString}\n`)
     server.redisClient.PUBLISH('st_submit', '1');
     server.redisClient.LPUSH('st_submit_list', tgResourceString);
   }

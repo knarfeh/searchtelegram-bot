@@ -6,8 +6,8 @@ const Extra = (Telegraf as any).Extra;
 
 export async function startCmd(ctx: any, server: any) {
   const payload = ctx.message.text.replace('/start ', '').replace('/start', '');
-  server.redisClient.SADD('stats:unique-user', ctx.message.from.username)
-  console.log(`[start]sender: ${ctx.message.from.username}, payload: ${payload}\n`)
+  server.redisClient.SADD('stats:unique-user', ctx.message.from.id)
+  console.log(`[start]sender: ${ctx.message.from.username}/${ctx.message.from.id}, payload: ${payload}\n`)
   ctx.reply(`
 🇬🇧
 I will help you search telegram group, channel, bot, people. You can also submit new item, get details with telegram ID
@@ -45,8 +45,8 @@ I will help you search telegram group, channel, bot, people. You can also submit
 
 export async function getCmd(ctx: any, server: any) {
   const payload = ctx.message.text.replace('/get ', '').replace('/get', '');
-  console.log('Add get unique user');
-  server.redisClient.SADD('stats:get-unique-user', ctx.message.from.username)
+  console.log(`[get]sender: ${ctx.message.from.username}/${ctx.message.from.id}, payload: ${payload}`)
+  server.redisClient.SADD('stats:get-unique-user', ctx.message.from.id)
   const getAsync = promisify(server.redisClient.get).bind(server.redisClient);
   const sismemberAsync = promisify(server.redisClient.sismember).bind(server.redisClient);
   const scardAsync = promisify(server.redisClient.scard).bind(server.redisClient);
@@ -68,14 +68,14 @@ export async function getCmd(ctx: any, server: any) {
 
   let thumupIcon = '👍';
   let thumupInfo = `thumbup_${resourceResult._source['tgid']}`;
-  const thumbIsMember = await sismemberAsync(`thumbup:${resourceResult._source['tgid']}`, ctx.message.from.username);
+  const thumbIsMember = await sismemberAsync(`thumbup:${resourceResult._source['tgid']}`, ctx.message.from.id);
   if (thumbIsMember === 1) {
     thumupIcon = '👍 (' + (parseInt(await scardAsync(`thumbup:${resourceResult._source['tgid']}`), 10)).toString() + ')';
     thumupInfo = `unthumbup_${resourceResult._source['tgid']}`;
   }
   let starIcon = '⭐';
   let starInfo = `star_${resourceResult._source['tgid']}`
-  const sisememberresult = await sismemberAsync(`star:${ctx.message.from.username}`, resourceResult._source['tgid']);
+  const sisememberresult = await sismemberAsync(`star:${ctx.message.from.id}`, resourceResult._source['tgid']);
   console.log('sismember result: ', sisememberresult)
   if (sisememberresult === 1) {
     starIcon = '✅'
@@ -102,9 +102,9 @@ export async function getCmd(ctx: any, server: any) {
 
 export async function submitCmd(ctx: any, server: any) {
   const payload = ctx.message.text.replace('/submit ', '').replace('/submit', '');
-  console.log(`[submit]sender: ${ctx.message.from.username}, user id: ${ctx.message.from.id}, payload: ${payload}`)
+  console.log(`[submit]sender: ${ctx.message.from.username}/${ctx.message.from.id}, payload: ${payload}`)
   console.log('Add submit unique user');
-  server.redisClient.SADD('stats:submit-unique-user', ctx.message.from.username)
+  server.redisClient.SADD('stats:submit-unique-user', ctx.message.from.id)
   if (payload === undefined || payload === null || payload === '') {
     const result = 'Please input telegram ID(e.g., /submit telegram)'
     ctx.reply(result);
@@ -119,7 +119,7 @@ export async function submitCmd(ctx: any, server: any) {
     tgid: payload,
   }
   const tgResourceString = JSON.stringify(tgResource);
-  console.log(`Telegram, ${ctx.message.from.username} submit resource: ${tgResourceString}\n`)
+  console.log(`Telegram, ${ctx.message.from.username}/${ctx.message.from.id} submit resource: ${tgResourceString}\n`)
   server.redisClient.PUBLISH('st_submit', '1');
   server.redisClient.LPUSH('st_submit_list', tgResourceString);
   return ctx.reply('👏 Successfully submitted. If everything goes well, you will be able to search for it after a while.')

@@ -57,7 +57,9 @@ export async function starCallback(ctx: any, server: any) {
   const sismemberAsync = promisify(server.redisClient.sismember).bind(server.redisClient);
   let thumupIcon = '👍';
   let thumupInfo = `thumbup_${tgID}`;
-  const thumbIsMember = await sismemberAsync(`thumbup:${tgID}`, ctx.update.callback_query.from.username);
+  console.log('callback_query: ')
+  console.dir(ctx.update.callback_query.from)
+  const thumbIsMember = await sismemberAsync(`thumbup:${tgID}`, ctx.update.callback_query.from.id);
   if (thumbIsMember === 1) {
     thumupIcon = '👍 (' + (parseInt(await scardAsync(`thumbup:${tgID}`), 10)).toString() + ')';
     thumupInfo = `unthumbup_${tgID}`;
@@ -71,7 +73,7 @@ export async function starCallback(ctx: any, server: any) {
       // m.callbackButton('🚫404', `notfound_${tgID}`),
   ])));
   await ctx.answerCbQuery('');
-  return starTG(ctx, server, tgID, ctx.update.callback_query.from.username)
+  return starTG(ctx, server, tgID, ctx.update.callback_query.from.id)
 }
 
 export async function unstarCallback(ctx: any, server: any) {
@@ -80,7 +82,7 @@ export async function unstarCallback(ctx: any, server: any) {
   const sismemberAsync = promisify(server.redisClient.sismember).bind(server.redisClient);
   let thumupIcon = '👍';
   let thumupInfo = `thumbup_${tgID}`;
-  const thumbIsMember = await sismemberAsync(`thumbup:${tgID}`, ctx.update.callback_query.from.username);
+  const thumbIsMember = await sismemberAsync(`thumbup:${tgID}`, ctx.update.callback_query.from.id);
   console.log('sismember result: ', thumbIsMember)
   if (thumbIsMember === 1) {
     thumupIcon = '👍 (' + (parseInt(await scardAsync(`thumbup:${tgID}`), 10)).toString() + ')';
@@ -95,7 +97,7 @@ export async function unstarCallback(ctx: any, server: any) {
       // m.callbackButton('🚫404', `notfound_${tgID}`),
   ])));
   await ctx.answerCbQuery('');
-  return unstarTG(ctx, server, tgID, ctx.update.callback_query.from.username)
+  return unstarTG(ctx, server, tgID, ctx.update.callback_query.from.id)
 }
 
 export async function thumbupCallback(ctx: any, server: any) {
@@ -107,7 +109,7 @@ export async function thumbupCallback(ctx: any, server: any) {
   let starIcon = '⭐';
   let starInfo = `star_${tgID}`
   const sismemberAsync = promisify(server.redisClient.sismember).bind(server.redisClient);
-  const sisememberresult = await sismemberAsync(`star:${ctx.update.callback_query.from.username}`, tgID);
+  const sisememberresult = await sismemberAsync(`star:${ctx.update.callback_query.from.id}`, tgID);
   if (sisememberresult === 1) {
     starIcon = '✅'
     starInfo = `unstar_${tgID}`
@@ -122,7 +124,7 @@ export async function thumbupCallback(ctx: any, server: any) {
   ])));
   await ctx.answerCbQuery('');
   // TODO thumbup
-  return thumbUpTG(ctx, server, tgID, ctx.update.callback_query.from.username)
+  return thumbUpTG(ctx, server, tgID, ctx.update.callback_query.from.id)
 }
 
 export async function unthumbupCallback(ctx: any, server: any) {
@@ -132,7 +134,7 @@ export async function unthumbupCallback(ctx: any, server: any) {
   let starIcon = '⭐';
   let starInfo = `star_${tgID}`
   const sismemberAsync = promisify(server.redisClient.sismember).bind(server.redisClient);
-  const sisememberresult = await sismemberAsync(`star:${ctx.update.callback_query.from.username}`, tgID);
+  const sisememberresult = await sismemberAsync(`star:${ctx.update.callback_query.from.id}`, tgID);
   if (sisememberresult === 1) {
     starIcon = '✅'
     starInfo = `unstar_${tgID}`
@@ -147,7 +149,7 @@ export async function unthumbupCallback(ctx: any, server: any) {
     // m.callbackButton('🚫404', `notfound_${tgID}`),
   ])));
   await ctx.answerCbQuery('');
-  return unThumbUpTG(ctx, server, tgID, ctx.update.callback_query.from.username)
+  return unThumbUpTG(ctx, server, tgID, ctx.update.callback_query.from.id)
 }
 
 export async function notfoundCallback(ctx: any, server: any) {
