@@ -8,7 +8,7 @@ export async function getResultByActionRes(ctx: any, server: any, action: any, r
   let result = '';
   console.log(`getResultByActionRes, payload: ${payload}`)
   if (payload === undefined || payload === null || payload === '') {
-    ctx.reply('Ok, tell me what are you searching for');
+    ctx.reply('Ok, tell me what you are searching for');
     return
   }
   // if (payload === '*') {
@@ -19,7 +19,6 @@ export async function getResultByActionRes(ctx: any, server: any, action: any, r
   }
   const isMemberAsync = promisify(server.redisClient.sismember).bind(server.redisClient);
   const value = await isMemberAsync('redisearch:cached-search-string', payload);
-  server.redisClient.SADD('stats:search-unique-user', ctx.message.from.id);
   if (value === 1) {
     console.log(`${payload} is cached search string`);
   }
@@ -86,6 +85,9 @@ export async function getResultByActionRes(ctx: any, server: any, action: any, r
   for (const hit of resourceResults.hits.hits) {
     let description = '';
     description = (hit['_source']['desc'] === '') ? 'None' : hit['_source']['desc'];
+    if (description.length > 40) {
+      description = description.substring(0, 40) + '...'
+    }
     let resTagString = '';
     for (const item of hit['_source']['tags']) {
       resTagString = resTagString + '#' + item['name'] + ' '

@@ -12,6 +12,8 @@ export async function searchCmd(ctx: any, server: any) {
   if (payload.startsWith('#')) {
     payload = '*' + payload;
   }
+  server.redisClient.SADD('stats:search-unique-user', ctx.message.from.id);
+  server.redisClient.SADD('stats:unique-user', ctx.message.from.id)
   const [result, totalPage] = await getResultByActionRes(ctx, server, 'search', payload, 1)
 
   if (totalPage === 0) {

@@ -3,6 +3,7 @@ import { emojiDict, sigStr } from '../constants';
 import { getCmd, submitCmd } from './handle_tg';
 import { starCmd, unstarCmd } from './user';
 import { searchCmd } from './search';
+import { langCmd } from './settings';
 
 export async function allText(ctx: any, server: any) {
   const payloadList = ctx.message.text.split(/_(.+)/, 2)
@@ -10,14 +11,14 @@ export async function allText(ctx: any, server: any) {
   if (payloadList.length === 2) {
     const fnMap = {
       '/get': getCmd,
+      '/lang': langCmd,
       '/search': searchCmd,
       '/star': starCmd,
       '/submit': submitCmd,
-      '/unstar': unstarCmd
+      '/unstar': unstarCmd,
     };
     if (Object.keys(fnMap).includes(payloadList[0])) {
       ctx.message.text = `${payloadList.slice(1).join('_')}`
-      console.log('wtf is text???' + ctx.message.text)
       await fnMap[`${payloadList[0]}`](ctx, server)
       return
     }

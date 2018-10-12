@@ -2,6 +2,7 @@ import Telegraf from 'telegraf';
 import { getResultByActionRes, starTG, unstarTG, thumbUpTG, unThumbUpTG } from '../utils';
 import { starCmd, } from './user';
 import { promisify } from 'util';
+import { langFlag } from '../constants';
 const Extra = (Telegraf as any).Extra;
 
 async function paginationEditListByCategory(ctx: any, server: any, operator: string, query: string) {
@@ -156,4 +157,17 @@ export async function notfoundCallback(ctx: any, server: any) {
   const tgID = ctx.match[0].split('_').slice(1).join('_')
   console.log('notfound tgID: ' + tgID)
   return ctx.reply('notfound')
+}
+
+export async function setLangCallback(ctx: any, server: any) {
+  const lang = ctx.match[0].split('_').slice(1).join('_');
+  ctx.i18n.locale(lang);
+  const desp = `${ctx.i18n.t('current_lang')}: ${ctx.i18n.t(lang)} ${langFlag[lang]}`
+  await ctx.answerCbQuery('');
+  await ctx.editMessageText(desp, Extra.HTML(true).webPreview(false).markup((m: any) =>
+    m.inlineKeyboard([
+      m.callbackButton(`${ctx.i18n.t('zh_cn')} ${langFlag['zh_cn']}`, `setlang_zh_cn`),
+      m.callbackButton(`${ctx.i18n.t('en')} ${langFlag['en']}`, `setlang_en`),
+    ], { columns: 2 })
+  ));
 }

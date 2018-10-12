@@ -1,25 +1,38 @@
+// import {path} from 'path';
 import Telegraf from 'telegraf'
+// import * as path from 'path';
+const I18n = require('telegraf-i18n');
 import Server from './server';
 import {
   searchCmd, searchPeopleCmd,
   startCmd, getCmd, submitCmd, deleteCmd, echoCmd,
   statsCmd, pingCmd, processCallback, starCmd, unstarCmd,
   collectionCmd, tagsCmd, thumbupCallback, unthumbupCallback,
-  notfoundCallback, starCallback, unstarCallback
+  notfoundCallback, starCallback, unstarCallback, langCmd, setLangCallback
 } from './commands';
+// import I18n from 'telegraf-i18n';
 import * as Stage from 'telegraf/stage';
-import * as session from 'telegraf/session';
-const enter = Stage.enter
+// import * as session from 'telegraf/session';
 import { allText } from './commands/common';
 import { sgroupScene, sbotScene, schannelScene } from './stages';
 
+import { i18n } from './constants/lang';
+const RedisSession = require('telegraf-session-redis')
+const enter = Stage.enter
 export const server = new Server(new Telegraf(process.env.BOT_TOKEN, {
   telegram: { webhookReply: true },
 }));
 const stage = new Stage([sgroupScene, sbotScene, schannelScene], { ttl: 15 })
+const session = new RedisSession({
+  store: {
+    host: process.env.REDIS_HOST || '127.0.0.1',
+    port: process.env.REDIS_PORT || 6379
+  }
+})
 
-server.bot.use(session())
-server.bot.use(stage.middleware())
+server.bot.use(session.middleware());
+server.bot.use(i18n.middleware());
+server.bot.use(stage.middleware());
 
 server.bot.command('start', (ctx: any) => { startCmd(ctx, server); })
 // server.bot.command('help', (ctx: any) => { helpCmd(ctx, server); })
@@ -40,7 +53,7 @@ server.bot.command('collection', async (ctx: any) => { await collectionCmd(ctx, 
 
 // Settings
 // server.bot.command('settings', async (ctx: any) => { await settingsCmd(ctx, server); })
-// server.bot.command('set_lang', async (ctx: any) => { await setCmd(ctx, server); })
+server.bot.command('lang', async (ctx: any) => { await langCmd(ctx, server); })
 
 // explore
 // server.bot.command('top', async (ctx: any) => { await topCmd(ctx, server); })
@@ -70,6 +83,7 @@ server.bot.action(/unthumbup_(.+)/, async (ctx: any) => { await unthumbupCallbac
 server.bot.action(/thumbup_(.+)/, async (ctx: any) => { await thumbupCallback(ctx, server); })
 server.bot.action(/unstar_(.+)/, async (ctx: any) => { await unstarCallback(ctx, server); })
 server.bot.action(/star_(.+)/, async (ctx: any) => { await starCallback(ctx, server); })
+server.bot.action(/setlang_(.+)/, async (ctx: any) => { await setLangCallback(ctx, server); })
 server.bot.action(/.+/, async (ctx: any) => { await processCallback(ctx, server); })
 
 // Handle all kinds of text.
