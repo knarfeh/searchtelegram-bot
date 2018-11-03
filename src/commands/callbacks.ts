@@ -4,6 +4,10 @@ import { starCmd, } from './user';
 import { promisify } from 'util';
 import { langFlag } from '../constants';
 const Extra = (Telegraf as any).Extra;
+import * as Stage from 'telegraf/stage';
+import { sbotScene } from '../stages';
+import { searchCmd } from './search';
+const enter = Stage.enter
 
 async function paginationEditListByCategory(ctx: any, server: any, operator: string, query: string) {
   const [category, currentPage] = query.split('-');
@@ -42,7 +46,7 @@ async function paginationEditListByCategory(ctx: any, server: any, operator: str
   ctx.answerCbQuery('');
 }
 
-export async function processCallback(ctx: any, server: any) {
+export async function processPageCallback(ctx: any, server: any) {
   const [operator, query] = ctx.match[0].split(':');
   if (['prev', 'next'].indexOf(operator) > -1) {
     await paginationEditListByCategory(ctx, server, operator, query);
@@ -170,4 +174,21 @@ export async function setLangCallback(ctx: any, server: any) {
       m.callbackButton(`${ctx.i18n.t('en')} ${langFlag['en']}`, `setlang_en`),
     ], { columns: 2 })
   ));
+}
+
+export async function searchCallback(ctx: any, server: any) {
+  const [_, searchType] = ctx.match[0].split('_');
+  console.log(`searchType??? ${searchType}`)
+  console.log(`scene state: ${ctx.scene.state}`)
+  console.dir(ctx.scene.state)
+  if (searchType === 'bot') {
+    ctx.scene.enter('sbot')
+  } else if (searchType === 'channel') {
+    ctx.scene.enter('schannel')
+  } else if (searchType === 'group') {
+    ctx.scene.enter('sgroup');
+  } else if (searchType === 'all') {
+    await searchCmd(ctx, server);
+  }
+  await ctx.answerCbQuery('');
 }

@@ -38,8 +38,19 @@ I will help you search telegram group, channel, bot, people. You can also submit
     m.inlineKeyboard([
       m.urlButton('🌐 ', 'https://searchtelegram.com'),
       m.urlButton('📢 ', 'https://t.me/SearchTelegramChannel'),
-      m.urlButton('👥 ', 'https://t.me/SearchTelegramGroup')
-    ]))
+      m.urlButton('👥 ', 'https://t.me/SearchTelegramGroup'),
+      m.callbackButton(` 🔎 `, `search_all`),
+    ])
+    // .keyboard([
+    //   `1. ${ctx.i18n.t('menu_main_search')}`,
+    //   `2. ${ctx.i18n.t('menu_main_tags')}`,
+    //   `3. ${ctx.i18n.t('menu_main_lang')}`,
+    //   `4. ${ctx.i18n.t('menu_main_help')}`,
+    //   `5. ${ctx.i18n.t('menu_main_donate')}`
+    // ], {
+    //   wrap: (btn, index, currentRow) => currentRow.length === 3
+    // })
+    )
   )
 }
 

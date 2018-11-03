@@ -1,6 +1,8 @@
 import { promisify } from 'util';
 import { emojiDict, sigStr, itemPerPage, noTgResponse, resultLine } from '../constants/tg';
 import { IResource } from '../resource';
+import Telegraf from 'telegraf';
+const Extra = (Telegraf as any).Extra;
 
 export async function getResultByActionRes(ctx: any, server: any, action: any, resource: any, thisPage: any) {
   const payload = resource
@@ -8,8 +10,16 @@ export async function getResultByActionRes(ctx: any, server: any, action: any, r
   let result = '';
   console.log(`getResultByActionRes, payload: ${payload}`)
   if (payload === undefined || payload === null || payload === '') {
-    ctx.reply('Ok, tell me what you are searching for');
-    return
+    result = 'Ok, tell me what you are searching for'
+    ctx.reply(result, Extra.HTML(true).webPreview(false).markup((m: any) =>
+      m.inlineKeyboard([
+        m.callbackButton(` 🔎 ${emojiDict['bot']}`, `search_bot`),
+        m.callbackButton(` 🔎 ${emojiDict['channel']}`, `search_channel`),
+        m.callbackButton(` 🔎 ${emojiDict['group']}`, `search_group`),
+        m.callbackButton(` 🔎 ${ctx.i18n.t('search_all')}`, `search_all`),
+      ], { columns: 3 })
+    ))
+    return ['', 0];
   }
   // if (payload === '*') {
   if (['*', '*#channel', '*#bot', '*#group'].indexOf(payload) > -1) {

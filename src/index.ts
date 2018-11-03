@@ -1,28 +1,24 @@
-// import {path} from 'path';
 import Telegraf from 'telegraf'
-// import * as path from 'path';
-const I18n = require('telegraf-i18n');
 import Server from './server';
 import {
   searchCmd, searchPeopleCmd,
   startCmd, getCmd, submitCmd, deleteCmd, echoCmd,
-  statsCmd, pingCmd, processCallback, starCmd, unstarCmd,
+  statsCmd, pingCmd, processPageCallback, starCmd, unstarCmd,
   collectionCmd, tagsCmd, thumbupCallback, unthumbupCallback,
-  notfoundCallback, starCallback, unstarCallback, langCmd, setLangCallback
+  notfoundCallback, starCallback, unstarCallback, langCmd, setLangCallback, searchCallback
 } from './commands';
-// import I18n from 'telegraf-i18n';
 import * as Stage from 'telegraf/stage';
-// import * as session from 'telegraf/session';
 import { allText } from './commands/common';
 import { sgroupScene, sbotScene, schannelScene } from './stages';
-
 import { i18n } from './constants/lang';
+const I18n = require('telegraf-i18n');
+
 const RedisSession = require('telegraf-session-redis')
 const enter = Stage.enter
 export const server = new Server(new Telegraf(process.env.BOT_TOKEN, {
   telegram: { webhookReply: true },
 }));
-const stage = new Stage([sgroupScene, sbotScene, schannelScene], { ttl: 15 })
+const stage = new Stage([sgroupScene, sbotScene, schannelScene], { ttl: 20 })
 const session = new RedisSession({
   store: {
     host: process.env.REDIS_HOST || '127.0.0.1',
@@ -78,13 +74,14 @@ server.bot.command('stats', async (ctx: any) => { await statsCmd(ctx, server); }
 server.bot.command('echo', (ctx: any) => { echoCmd(ctx, server); })
 
 // callback
-server.bot.action(/notfound_(.+)/, async (ctx: any) => { await notfoundCallback(ctx, server); })
-server.bot.action(/unthumbup_(.+)/, async (ctx: any) => { await unthumbupCallback(ctx, server); })
-server.bot.action(/thumbup_(.+)/, async (ctx: any) => { await thumbupCallback(ctx, server); })
-server.bot.action(/unstar_(.+)/, async (ctx: any) => { await unstarCallback(ctx, server); })
-server.bot.action(/star_(.+)/, async (ctx: any) => { await starCallback(ctx, server); })
-server.bot.action(/setlang_(.+)/, async (ctx: any) => { await setLangCallback(ctx, server); })
-server.bot.action(/.+/, async (ctx: any) => { await processCallback(ctx, server); })
+server.bot.action(/^notfound_(.+)/, async (ctx: any) => { await notfoundCallback(ctx, server); })
+server.bot.action(/^unthumbup_(.+)/, async (ctx: any) => { await unthumbupCallback(ctx, server); })
+server.bot.action(/^thumbup_(.+)/, async (ctx: any) => { await thumbupCallback(ctx, server); })
+server.bot.action(/^unstar_(.+)/, async (ctx: any) => { await unstarCallback(ctx, server); })
+server.bot.action(/^star_(.+)/, async (ctx: any) => { await starCallback(ctx, server); })
+server.bot.action(/^setlang_(.+)/, async (ctx: any) => { await setLangCallback(ctx, server); })
+server.bot.action(/^search_(.+)/, async (ctx: any) => { await searchCallback(ctx, server); })
+server.bot.action(/.+/, async (ctx: any) => { await processPageCallback(ctx, server); })
 
 // Handle all kinds of text.
 server.bot.on('text', async (ctx: any) => { await allText(ctx, server); })

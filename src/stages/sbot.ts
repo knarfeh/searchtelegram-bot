@@ -1,3 +1,4 @@
+import { emojiDict } from './../constants/tg';
 import Telegraf from 'telegraf';
 import * as Scene from 'telegraf/scenes/base';
 import * as Stage from 'telegraf/stage';
@@ -9,13 +10,21 @@ const Extra = (Telegraf as any).Extra;
 export const sbotScene = new Scene('sbot')
 
 sbotScene.enter(async (ctx: any) => {
-  const payload = ctx.message.text.replace('/sbot ', '').replace('/sbot', '');
+  let payload = '';
+  if (ctx.message) {
+    payload = ctx.message.text.replace('/sbot ', '').replace('/sbot', '');
+  }
   if (payload !== '') {
     ctx.message.text = `/search ${payload}#bot`
     await searchCmd(ctx, server);
   } else {
-    ctx.reply('Ok, tell me what bot are you searching for', Extra.markup((m: any) =>
-      m.keyboard(['Cancel'])
+    ctx.reply(`Ok, tell me what ${emojiDict['bot']} are you searching for`, Extra.HTML(true).webPreview(false).markup((m: any) =>
+      m.inlineKeyboard([
+        m.callbackButton(` 🔎 ${ctx.i18n.t('search_all')}`, `search_all`),
+        m.callbackButton(` 🔎 ${emojiDict['channel']}`, `search_channel`),
+        m.callbackButton(` 🔎 ${emojiDict['group']}`, `search_group`),
+        m.callbackButton(` 🔎 ${emojiDict['bot']} (${ctx.i18n.t('count_time')})`, `search_bot`),
+      ], { columns: 3 })
     ));
   }
 })
