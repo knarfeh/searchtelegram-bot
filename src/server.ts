@@ -2,7 +2,6 @@ import * as express from 'express'; /* ts-diable */
 import * as elasticsearch from 'elasticsearch';
 import * as redis from 'redis';
 import { url } from './config/config';
-// import { url}
 const redsearch = require('redredisearch'); /* ts-diable */
 
 const WEBHOOK_PATH = process.env.WEBHOOK_PATH;
@@ -21,7 +20,8 @@ export default class Server {
     });
     redsearch.setClient(redisClient);
 
-    bot.telegram.setWebhook(`${url}${WEBHOOK_PATH}`);
+    console.log(`Settings webhook: ${url}${WEBHOOK_PATH}`)
+    // bot.telegram.setWebhook(`${url}${WEBHOOK_PATH}`);
     bot.startWebhook(`/${WEBHOOK_PATH}`, null, 80);
     this.express = server;
     this.bot = bot;

@@ -1,0 +1,15 @@
+en: 英文
+zh_cn: 中文
+current_lang: 当前语言
+
+menu_main_search: 搜索 🔎
+menu_main_tags: 所有标签 🏷️
+menu_main_lang: 语言 🌐
+menu_main_help: 帮助 🔑
+menu_main_donate: 赞助🎗️
+
+search_all: 搜索所有
+search_bot: 搜索机器人
+search_channel: 搜索频道
+search_group: 搜索群组
+count_time: 20秒

@@ -38,8 +38,19 @@ I will help you search telegram group, channel, bot, people. You can also submit
     m.inlineKeyboard([
       m.urlButton('🌐 ', 'https://searchtelegram.com'),
       m.urlButton('📢 ', 'https://t.me/SearchTelegramChannel'),
-      m.urlButton('👥 ', 'https://t.me/SearchTelegramGroup')
-    ]))
+      m.urlButton('👥 ', 'https://t.me/SearchTelegramGroup'),
+      m.callbackButton(` 🔎 `, `search_all`),
+    ])
+    // .keyboard([
+    //   `1. ${ctx.i18n.t('menu_main_search')}`,
+    //   `2. ${ctx.i18n.t('menu_main_tags')}`,
+    //   `3. ${ctx.i18n.t('menu_main_lang')}`,
+    //   `4. ${ctx.i18n.t('menu_main_help')}`,
+    //   `5. ${ctx.i18n.t('menu_main_donate')}`
+    // ], {
+    //   wrap: (btn, index, currentRow) => currentRow.length === 3
+    // })
+    )
   )
 }
 
@@ -47,6 +58,8 @@ export async function getCmd(ctx: any, server: any) {
   const payload = ctx.message.text.replace('/get ', '').replace('/get', '');
   console.log(`[get]sender: ${ctx.message.from.username}/${ctx.message.from.id}, payload: ${payload}`)
   server.redisClient.SADD('stats:get-unique-user', ctx.message.from.id)
+  server.redisClient.SADD('stats:unique-user', ctx.message.from.id)
+
   const getAsync = promisify(server.redisClient.get).bind(server.redisClient);
   const sismemberAsync = promisify(server.redisClient.sismember).bind(server.redisClient);
   const scardAsync = promisify(server.redisClient.scard).bind(server.redisClient);
@@ -105,6 +118,7 @@ export async function submitCmd(ctx: any, server: any) {
   console.log(`[submit]sender: ${ctx.message.from.username}/${ctx.message.from.id}, payload: ${payload}`)
   console.log('Add submit unique user');
   server.redisClient.SADD('stats:submit-unique-user', ctx.message.from.id)
+  server.redisClient.SADD('stats:unique-user', ctx.message.from.id)
   if (payload === undefined || payload === null || payload === '') {
     const result = 'Please input telegram ID(e.g., /submit telegram)'
     ctx.reply(result);

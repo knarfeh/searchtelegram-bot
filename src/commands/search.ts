@@ -8,13 +8,21 @@ import * as Stage from 'telegraf/stage';
 const leave = Stage.leave
 
 export async function searchCmd(ctx: any, server: any) {
-  let payload = ctx.message.text.replace('/search ', '').replace('/search', '');
+  let payload = '';
+  if (ctx.message) {
+    payload = ctx.message.text.replace('/search ', '').replace('/search', '');
+    server.redisClient.SADD('stats:search-unique-user', ctx.message.from.id);
+    server.redisClient.SADD('stats:unique-user', ctx.message.from.id)
+  }
   if (payload.startsWith('#')) {
     payload = '*' + payload;
   }
   const [result, totalPage] = await getResultByActionRes(ctx, server, 'search', payload, 1)
 
   if (totalPage === 0) {
+    if (result === '') {
+      return;
+    }
     ctx.reply(result + sigStr, Extra.HTML(true).webPreview(false))
   } else if (totalPage === 1) {
     ctx.reply(result, Extra.HTML(true).webPreview(false))
@@ -24,9 +32,10 @@ export async function searchCmd(ctx: any, server: any) {
         m.urlButton('🌐 ', 'https://searchtelegram.com'),
         m.urlButton('📢 ', 'https://t.me/SearchTelegramChannel'),
         m.urlButton('👥 ', 'https://t.me/SearchTelegramGroup'),
+        m.callbackButton(` 🔎 `, `search_all`),
         m.callbackButton('1', 'current_page'),
         m.callbackButton('>>', `next:search_${payload}-1`)
-      ], { columns: 3 })
+      ], { columns: 4 })
     ));
   }
 }
