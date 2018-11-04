@@ -45,6 +45,8 @@ export function statsCmd(ctx: any, server: any) {
     .scard('stats:ping-unique-user')
     .scard('stats:echo-unique-user')
     .scard('stats:stats-unique-user')
+    .scard('stats:tags-unique-user')
+    .scard('stats:collection-unique-user')
     .smembers('redisearch:cached-search-string')
     .exec(async (err: any, replies: any) => {
         const redisResult = `Unique user: ${replies[0].toString()}
@@ -54,7 +56,9 @@ Unique user who input /submit: ${replies[3].toString()};
 Unique user who input /ping: ${replies[4].toString()};
 Unique user who input /echo: ${replies[5].toString()};
 Unique user who input /stats: ${replies[6].toString()};
-Cached search string: \n${replies[7].toString()}`;
+Unique user who input /tags: ${replies[7].toString()};
+Unique user who input /collection: ${replies[8].toString()};
+Cached search string: \n${replies[9].toString()}`;
         result = redisResult;
         const docCount  = await server.esClient.count({
           index: 'telegram',

@@ -1,10 +1,4 @@
-import * as Scene from 'telegraf/scenes/base';
-import * as Stage from 'telegraf/stage';
-import * as path from 'path';
 import Telegraf from 'telegraf';
-import { promisify } from 'util';
-import { emojiDict, sigStr } from './../constants/tg';
-import { getResultByActionRes } from '../utils/search';
 import { langFlag } from '../constants';
 const Extra = (Telegraf as any).Extra;
 

@@ -1,5 +1,5 @@
 import { promisify } from 'util';
-import { emojiDict, sigStr, itemPerPage, noTgResponse, resultLine } from '../constants/tg';
+import { emojiDict, sigStr, noTgResponse, resultLine } from '../constants/tg';
 import { IResource } from '../resource';
 
 export async function starTG(ctx: any, server: any, tgID: string, userid: string) {
@@ -9,8 +9,8 @@ export async function starTG(ctx: any, server: any, tgID: string, userid: string
     return ctx.reply('Ops, this id does not exist, perhaps you could submit with /submit ' + tgID)
   }
   server.redisClient.SADD(`star:${userid}`, tgID)
-  server.redisClient.SADD('stats:star-unique-user', ctx.message.from.id)
-  server.redisClient.SADD('stats:unique-user', ctx.message.from.id)
+  server.redisClient.SADD('stats:star-unique-user', userid)
+  server.redisClient.SADD('stats:unique-user', userid)
 
   const resourceResult: any = await server.esClient.get({
     id: tgID,
@@ -18,7 +18,7 @@ export async function starTG(ctx: any, server: any, tgID: string, userid: string
     type: `user_${userid}`
   }).catch(function (err: any) {
     if (err.status === 404) {
-      return server.esClient.create({
+      server.esClient.create({
         body: {
           star: true
         },
@@ -26,6 +26,7 @@ export async function starTG(ctx: any, server: any, tgID: string, userid: string
         index: 'telegram',
         type: `user_${userid}`,
       })
+      return ctx.reply(`OK, checkout your collection with /collection`);
     } else {
       console.log('[starTG] err status: ', err.status)
       throw err;
@@ -33,16 +34,19 @@ export async function starTG(ctx: any, server: any, tgID: string, userid: string
   });
 
   const tgBody: {[key: string]: any} = resourceResult['_source'];
-  console.log('tgBody: ');
-  console.dir(tgBody)
-  tgBody['star'] = true
-  await server.esClient.index({
-    body: tgBody,
-    id: tgID,
-    index: 'telegram',
-    type: `user_${userid}`
-  })
-  ctx.reply(`OK, checkout your collection with /collection`);
+  if (tgBody) {
+    console.log('starTG, tgBody: ');
+    console.dir(tgBody)
+    tgBody['star'] = true
+    await server.esClient.index({
+      body: tgBody,
+      id: tgID,
+      index: 'telegram',
+      type: `user_${userid}`
+    })
+    ctx.reply(`OK, checkout your collection with /collection`);
+  }
+
 }
 
 export async function unstarTG(ctx: any, server: any, tgID: string, userid: string) {
@@ -52,8 +56,8 @@ export async function unstarTG(ctx: any, server: any, tgID: string, userid: stri
     return ctx.reply('Ops, this id does not exist, perhaps you could submit with /submit ' + tgID)
   }
   server.redisClient.SREM(`star:${userid}`, tgID)
-  server.redisClient.SADD('stats:unstar-unique-user', ctx.message.from.id)
-  server.redisClient.SADD('stats:unique-user', ctx.message.from.id)
+  server.redisClient.SADD('stats:unstar-unique-user', userid)
+  server.redisClient.SADD('stats:unique-user', userid)
 
   const resourceResult: any = await server.esClient.get({
     id: tgID,
@@ -94,8 +98,8 @@ export async function thumbUpTG(ctx: any, server: any, tgID: string, userid: str
     return ctx.reply('Ops, this id does not exist, perhaps you could submit with /submit ' + tgID)
   }
   server.redisClient.SADD(`thumbup:${tgID}`, userid)
-  server.redisClient.SADD('stats:thumbup-unique-user', ctx.message.from.id)
-  server.redisClient.SADD('stats:unique-user', ctx.message.from.id)
+  server.redisClient.SADD('stats:thumbup-unique-user', userid)
+  server.redisClient.SADD('stats:unique-user', userid)
 }
 
 export async function unThumbUpTG(ctx: any, server: any, tgID: string, userid: string) {
@@ -105,6 +109,6 @@ export async function unThumbUpTG(ctx: any, server: any, tgID: string, userid: s
     return ctx.reply('Ops, this id does not exist, perhaps you could submit with /submit ' + tgID)
   }
   server.redisClient.SREM(`thumbup:${tgID}`, userid)
-  server.redisClient.SADD('stats:unthumbup-unique-user', ctx.message.from.id)
-  server.redisClient.SADD('stats:unique-user', ctx.message.from.id)
+  server.redisClient.SADD('stats:unthumbup-unique-user', userid)
+  server.redisClient.SADD('stats:unique-user', userid)
 }

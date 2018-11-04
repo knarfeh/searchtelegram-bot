@@ -14,6 +14,8 @@ export async function unstarCmd(ctx: any, server: any) {
 
 export async function collectionCmd(ctx: any, server: any) {
   // const payload = ctx.message.text.replace('/collection ', '').replace('/star', '');
+  server.redisClient.SADD('stats:collection-unique-user', ctx.message.from.id)
+  server.redisClient.SADD('stats:unique-user', ctx.message.from.id)
   console.log('TODO: aggragate');
   const resourceResult = await server.esClient.search({
     body: { query: { term : { star : true }}},

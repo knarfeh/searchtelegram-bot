@@ -4,6 +4,8 @@ import { emojiDict, sigStr } from '../constants';
 const Extra = (Telegraf as any).Extra;
 
 export async function tagsCmd(ctx: any, server: any) {
+  server.redisClient.SADD('stats:tags-unique-user', ctx.message.from.id)
+  server.redisClient.SADD('stats:unique-user', ctx.message.from.id)
   const queryBody = {
     aggs: {
       tags: {

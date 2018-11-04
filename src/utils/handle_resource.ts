@@ -1,11 +1,11 @@
 import { promisify } from 'util';
-import { emojiDict, sigStr, itemPerPage, noTgResponse, resultLine } from '../constants/tg';
+import { emojiDict, sigStr, searchItemPerPage, noTgResponse, resultLine } from '../constants/tg';
 import { IResource } from '../resource';
 import Telegraf from 'telegraf';
 const Extra = (Telegraf as any).Extra;
 
-export async function getResultByActionRes(ctx: any, server: any, action: any, resource: any, thisPage: any) {
-  const payload = resource
+async function getSearchResult(ctx: any, server: any, resource: any, thisPage: any) {
+  const payload = resource;
   let totalPage = 0;
   let result = '';
   console.log(`getResultByActionRes, payload: ${payload}`)
@@ -21,7 +21,6 @@ export async function getResultByActionRes(ctx: any, server: any, action: any, r
     ))
     return ['', 0];
   }
-  // if (payload === '*') {
   if (['*', '*#channel', '*#bot', '*#group'].indexOf(payload) > -1) {
     result = noTgResponse;
     totalPage = 0;
@@ -31,8 +30,9 @@ export async function getResultByActionRes(ctx: any, server: any, action: any, r
   const value = await isMemberAsync('redisearch:cached-search-string', payload);
   if (value === 1) {
     console.log(`${payload} is cached search string`);
+  } else {
+    console.log(`No cache in redis, search in elasticsearch, search str: ${payload}`)
   }
-  console.log(`No cache in redis, search in elasticsearch, search str: ${payload}`)
   const splitPayload = payload.split(/#(.+)/)
   const queryString = splitPayload[0]
 
@@ -51,13 +51,13 @@ export async function getResultByActionRes(ctx: any, server: any, action: any, r
   const tagsSlice = noSpaceTagsStr.split(' ')
   const queryBody: any = {
     _source: [ 'tgid', 'title', 'type', 'desc', 'tags' ],
-    from: itemPerPage * (parseInt(thisPage, 10) - 1),
+    from: searchItemPerPage * (parseInt(thisPage, 10) - 1),
     query: {
       simple_query_string: {
         query: queryString,
       }
     },
-    size: itemPerPage,
+    size: searchItemPerPage,
   }
 
   if (tagsSlice.length > 0 && tagsSlice[0] !== '') {
@@ -111,6 +111,16 @@ export async function getResultByActionRes(ctx: any, server: any, action: any, r
     result = result + hitStr;
   }
   const totalRecord = parseInt(resourceResults.hits.total, 10);
-  totalPage = totalRecord % itemPerPage === 0 ? totalRecord / itemPerPage : Math.ceil(totalRecord / itemPerPage) ;
+  totalPage = totalRecord % searchItemPerPage === 0 ? totalRecord / searchItemPerPage : Math.ceil(totalRecord / searchItemPerPage) ;
   return [result, totalPage]
+}
+
+async function getCollectionResult(ctx: any, server: any, resource: any, thisPage: any) {
+  console.log('TODO')
+}
+
+export async function getResultByActionRes(ctx: any, server: any, action: any, resource: any, thisPage: any) {
+  if (action === 'search') {
+    return getSearchResult(ctx, server, resource, thisPage);
+  }
 }

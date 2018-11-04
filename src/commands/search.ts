@@ -1,7 +1,7 @@
 import Telegraf from 'telegraf';
 import { promisify } from 'util';
 import { emojiDict, sigStr } from './../constants/tg';
-import { getResultByActionRes } from '../utils/search';
+import { getResultByActionRes } from '../utils/handle_resource';
 const Extra = (Telegraf as any).Extra;
 import * as Scene from 'telegraf/scenes/base';
 import * as Stage from 'telegraf/stage';
@@ -34,7 +34,7 @@ export async function searchCmd(ctx: any, server: any) {
         m.urlButton('👥 ', 'https://t.me/SearchTelegramGroup'),
         m.callbackButton(` 🔎 `, `search_all`),
         m.callbackButton('1', 'current_page'),
-        m.callbackButton('>>', `next:search_${payload}-1`)
+        m.callbackButton('➡️', `next:search_${payload}-1`)
       ], { columns: 4 })
     ));
   }
