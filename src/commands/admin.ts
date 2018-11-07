@@ -1,3 +1,4 @@
+import { promisify } from 'util';
 
 export async function deleteCmd(ctx: any, server: any) {
   if (ctx.message.from.username !== 'knarfeh') {
@@ -115,4 +116,17 @@ export function echoCmd(ctx: any, server: any) {
   const payload = ctx.message.text.replace('/echo ', '').replace('/echo', '');
   server.redisClient.SADD('stats:echo-unique-user', ctx.message.from.id)
   ctx.reply(payload)
+}
+
+export async function redisInfoCmd(ctx: any, server: any) {
+  if (ctx.message.from.username !== 'knarfeh') {
+    return ctx.reply(`Sorry, but you don't have sufficient permissions.`)
+  };
+  // const payload = ctx.message.text.replace('/redis ', '').replace('/redis', '');
+  const server_info = server.redisClient.server_info;
+  const result = `
+used_memory_human: ${server_info.used_memory_human}
+db0:keys: ${server_info.db0.keys}
+`
+  ctx.reply(result)
 }

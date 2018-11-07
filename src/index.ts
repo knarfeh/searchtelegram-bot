@@ -4,7 +4,7 @@ import {
   searchCmd, searchPeopleCmd, startCmd, getCmd, submitCmd, deleteCmd, echoCmd,
   statsCmd, pingCmd, processPageCallback, starCmd, unstarCmd, collectionCmd, tagsCmd,
   thumbupCallback, unthumbupCallback, notfoundCallback, starCallback, unstarCallback, langCmd, setLangCallback,
-  searchCallback, allText, donateCmd, helpCmd
+  searchCallback, allText, donateCmd, helpCmd, redisInfoCmd
 } from './commands';
 import * as Stage from 'telegraf/stage';
 import { sgroupScene, sbotScene, schannelScene } from './stages';
@@ -83,7 +83,7 @@ server.bot.command('speople', async (ctx: any) => { await searchPeopleCmd(ctx, s
 server.bot.command('delete', async (ctx: any) => { await deleteCmd(ctx, server); })
 server.bot.command('ping', (ctx: any) => { pingCmd(ctx, server); })
 server.bot.command('stats', async (ctx: any) => { await statsCmd(ctx, server); })
-// server.bot.command('redis', async (ctx: any) => { await redisCmd(ctx, server); })
+server.bot.command('redis', async (ctx: any) => { await redisInfoCmd(ctx, server); })
 // server.bot.command('elasticsearch', async (ctx: any) => { await elasticsearchCmd(ctx, server); })
 server.bot.command('echo', (ctx: any) => { echoCmd(ctx, server); })
 

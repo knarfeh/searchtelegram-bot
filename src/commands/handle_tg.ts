@@ -9,6 +9,9 @@ export async function getCmd(ctx: any, server: any) {
   console.log(`[get]sender: ${ctx.message.from.username}/${ctx.message.from.id}, payload: ${payload}`)
   server.redisClient.SADD('stats:get-unique-user', ctx.message.from.id)
   server.redisClient.SADD('stats:unique-user', ctx.message.from.id)
+  if (payload === '') {
+    return ctx.reply(`Ops, telegram id can't be None`);
+  }
 
   const getAsync = promisify(server.redisClient.get).bind(server.redisClient);
   const sismemberAsync = promisify(server.redisClient.sismember).bind(server.redisClient);
