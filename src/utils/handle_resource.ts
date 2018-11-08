@@ -37,6 +37,7 @@ async function getSearchResult(ctx: any, server: any, resource: any, thisPage: a
   const queryString = splitPayload[0]
 
   server.redisClient.PUBLISH('st_search', queryString);
+  server.redisClient.SADD('stats:all-search-string', queryString);
   let tagString = ''
   if (splitPayload.length === 3) {
     tagString = '#' + splitPayload[1]

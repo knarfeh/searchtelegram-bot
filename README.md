@@ -11,10 +11,31 @@ Telegram bot that searches telegram bot, channel, public group.
 * [@storebot](https://t.me/storebot)
 * [@Osiris-GroupIndexer](https://github.com/wfjsw/osiris-groupindexer)
 
+## TODO
+
+### docs
+
+### Google analytics or other stats
+
+https://www.npmjs.com/package/telegraf-statsd
+
+### start with parameters
+
+https://github.com/yagop/node-telegram-bot-api/issues/406
+
+### Tests
+
+https://github.com/TiagoDanin/Telegraf-Test
+
+
+### Rate limit
+https://www.npmjs.com/package/telegraf-userbased-ratelimit
+
+### NLP
+
+https://github.com/telegraf/telegraf-wit
+
+
 ## License
 
 [AGPLv3](https://www.gnu.org/licenses/agpl-3.0.en.html)
-
-## TODO
-
-https://github.com/yagop/node-telegram-bot-api/issues/406

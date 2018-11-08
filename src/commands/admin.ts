@@ -49,6 +49,7 @@ export function statsCmd(ctx: any, server: any) {
     .scard('stats:tags-unique-user')
     .scard('stats:collection-unique-user')
     .smembers('redisearch:cached-search-string')
+    .smembers('stats:all-search-string')
     .exec(async (err: any, replies: any) => {
         const redisResult = `Unique user: ${replies[0].toString()}
 Unique user who input /search: ${replies[1].toString()};
@@ -59,7 +60,9 @@ Unique user who input /echo: ${replies[5].toString()};
 Unique user who input /stats: ${replies[6].toString()};
 Unique user who input /tags: ${replies[7].toString()};
 Unique user who input /collection: ${replies[8].toString()};
-Cached search string: \n${replies[9].toString()}`;
+Cached search string: \n${replies[9].toString()}
+All search string: \n${replies[10].toString()}
+`;
         result = redisResult;
         const docCount  = await server.esClient.count({
           index: 'telegram',
@@ -122,7 +125,6 @@ export async function redisInfoCmd(ctx: any, server: any) {
   if (ctx.message.from.username !== 'knarfeh') {
     return ctx.reply(`Sorry, but you don't have sufficient permissions.`)
   };
-  // const payload = ctx.message.text.replace('/redis ', '').replace('/redis', '');
   const server_info = server.redisClient.server_info;
   const result = `
 used_memory_human: ${server_info.used_memory_human}
