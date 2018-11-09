@@ -5,36 +5,15 @@
 
 Telegram bot that searches telegram bot, channel, public group.
 
+See full documentation at [https://docs.searchtelegram.com/](https://docs.searchtelegram.com/)
+
+Check out Service status as [http://status.nujeh.com]
+
 ## Thanks
 
 * [@tchannelsbot](https://t.me/tchannelsbot)
 * [@storebot](https://t.me/storebot)
 * [@Osiris-GroupIndexer](https://github.com/wfjsw/osiris-groupindexer)
-
-## TODO
-
-### docs
-
-### Google analytics or other stats
-
-https://www.npmjs.com/package/telegraf-statsd
-
-### start with parameters
-
-https://github.com/yagop/node-telegram-bot-api/issues/406
-
-### Tests
-
-https://github.com/TiagoDanin/Telegraf-Test
-
-
-### Rate limit
-https://www.npmjs.com/package/telegraf-userbased-ratelimit
-
-### NLP
-
-https://github.com/telegraf/telegraf-wit
-
 
 ## License
 

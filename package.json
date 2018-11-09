@@ -40,7 +40,8 @@
     "ts-node": "^7.0.1",
     "tsc": "^1.20150623.0",
     "tslint": "^5.8.0",
-    "typescript": "^2.6"
+    "typescript": "^2.6",
+    "vuepress": "^0.14.4"
   },
   "scripts": {
     "lint:ts": "tslint -p . -t stylish --exclude \"{build,node_modules}/**\" \"**/*.ts\"",
