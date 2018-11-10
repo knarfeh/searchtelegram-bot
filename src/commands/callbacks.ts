@@ -25,7 +25,7 @@ async function paginationEditListByCategory(ctx: any, server: any, operator: str
   if (thisPage === 1 && thisPage < totalPage) {
     await ctx.editMessageText(result, Extra.webPreview(false).HTML().markup((m: any) => m.inlineKeyboard([
       m.callbackButton(`${thisPage}`, 'current_page'),
-      m.callbackButton('>>', `next:${category}-${thisPage}`),
+      m.callbackButton('➡️', `next:${category}-${thisPage}`),
     ])));
   } else if (thisPage === 1 && thisPage >= totalPage) {
     ctx.editMessageText(result, Extra.webPreview(false).HTML().markup((m: any) => m.inlineKeyboard([
@@ -33,13 +33,13 @@ async function paginationEditListByCategory(ctx: any, server: any, operator: str
     ])));
   } else if (thisPage > 1 && thisPage < totalPage) {
     await ctx.editMessageText(result, Extra.webPreview(false).HTML().markup((m: any) => m.inlineKeyboard([
-      m.callbackButton('<<', `prev:${category}-${thisPage}`),
+      m.callbackButton('⬅️', `prev:${category}-${thisPage}`),
       m.callbackButton(`${thisPage}`, 'current_page'),
-      m.callbackButton('>>', `next:${category}-${thisPage}`),
+      m.callbackButton('➡️', `next:${category}-${thisPage}`),
     ])));
   } else if (thisPage > 1 && thisPage >= totalPage) {
     await ctx.editMessageText(result, Extra.webPreview(false).HTML().markup((m: any) => m.inlineKeyboard([
-      m.callbackButton('<<', `prev:${category}-${thisPage}`),
+      m.callbackButton('⬅️', `prev:${category}-${thisPage}`),
       m.callbackButton(`${thisPage}`, 'current_page'),
     ])));
   }
@@ -62,9 +62,8 @@ export async function starCallback(ctx: any, server: any) {
   const sismemberAsync = promisify(server.redisClient.sismember).bind(server.redisClient);
   let thumupIcon = '👍';
   let thumupInfo = `thumbup_${tgID}`;
-  console.log('callback_query: ')
-  console.dir(ctx.update.callback_query.from)
   const thumbIsMember = await sismemberAsync(`thumbup:${tgID}`, ctx.update.callback_query.from.id);
+  console.log(`starCallback, id: ${ctx.update.callback_query.from.id}, thumbIsMember result: ${thumbIsMember}`, thumbIsMember)
   if (thumbIsMember === 1) {
     thumupIcon = '👍 (' + (parseInt(await scardAsync(`thumbup:${tgID}`), 10)).toString() + ')';
     thumupInfo = `unthumbup_${tgID}`;
@@ -88,7 +87,7 @@ export async function unstarCallback(ctx: any, server: any) {
   let thumupIcon = '👍';
   let thumupInfo = `thumbup_${tgID}`;
   const thumbIsMember = await sismemberAsync(`thumbup:${tgID}`, ctx.update.callback_query.from.id);
-  console.log('sismember result: ', thumbIsMember)
+  console.log(`unstartCallback, id: ${ctx.update.callback_query.from.id}, thumbIsMember result: ${thumbIsMember}`, thumbIsMember)
   if (thumbIsMember === 1) {
     thumupIcon = '👍 (' + (parseInt(await scardAsync(`thumbup:${tgID}`), 10)).toString() + ')';
     thumupInfo = `unthumbup_${tgID}`;

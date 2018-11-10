@@ -1,2 +1,2 @@
-export * from './search';
+export * from './handle_resource';
 export * from './user';

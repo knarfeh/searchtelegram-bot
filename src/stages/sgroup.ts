@@ -18,7 +18,7 @@ sgroupScene.enter(async (ctx: any) => {
     ctx.message.text = `/search ${payload}#group`
     await searchCmd(ctx, server);
   } else {
-    ctx.reply(`Ok, tell me what ${emojiDict['group']} are you searching for`, Extra.HTML(true).webPreview(false).markup((m: any) =>
+    ctx.reply(`Ok, tell me what ${emojiDict['group']} you are searching for`, Extra.HTML(true).webPreview(false).markup((m: any) =>
       m.inlineKeyboard([
         m.callbackButton(` 🔎 ${ctx.i18n.t('search_all')}`, `search_all`),
         m.callbackButton(` 🔎 ${emojiDict['channel']}`, `search_channel`),

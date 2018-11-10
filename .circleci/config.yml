@@ -1,6 +1,9 @@
 version: 2
 jobs:
   build:
+    branches:
+      ignore:
+        - gh-pages
     working_directory: ~/searchtelegram-bot
     docker:
       - image: circleci/node:8.11-stretch
@@ -15,3 +18,6 @@ jobs:
       - run:
           name: ci
           command: npm run lint
+      - run:
+          name: docs
+          command: ./deploy.sh

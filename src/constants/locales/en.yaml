@@ -2,6 +2,8 @@ en: English
 zh_cn: Chinese
 current_lang: Current language
 
+start_info: I will help you search telegram group, channel, bot, people. You can also submit new item, get details with telegram ID
+
 menu_main_search: Search 🔎
 menu_main_tags: Tags 🏷️
 menu_main_lang: Languages 🌐
@@ -12,4 +14,6 @@ search_all: Search all
 search_bot: Search bot
 search_channel: Search channel
 search_group: Search group
-count_time: 20s
+count_time: 15s
+
+donate_paragraph: While the service is free of charge for everyone, it still requires servers, domains, storage and other resources to keep it running. \n\nConsider a donation to cover these costs. Even if it's just enough for a coffee, your support helps running the service and motivates the future development.

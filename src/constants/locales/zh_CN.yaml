@@ -2,6 +2,8 @@ en: 英文
 zh_cn: 中文
 current_lang: 当前语言
 
+start_info: 我可以帮助您搜索电报群组，频道，机器人，用户。您也可以提交新的电报 ID，根据 ID 获取详细信息。
+
 menu_main_search: 搜索 🔎
 menu_main_tags: 所有标签 🏷️
 menu_main_lang: 语言 🌐
@@ -12,4 +14,6 @@ search_all: 搜索所有
 search_bot: 搜索机器人
 search_channel: 搜索频道
 search_group: 搜索群组
-count_time: 20秒
+count_time: 15秒
+
+donate_paragraph: 尽管服务是免费的，她的运行仍需消耗服务器，域名，存储以及其他资源。\n\n考虑一下捐助来支付这些开销。即使金额只足够买一杯咖啡，您的帮助也可以支撑服务的运行，并激励项目未来的开发。
