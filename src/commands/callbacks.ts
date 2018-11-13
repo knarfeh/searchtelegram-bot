@@ -169,7 +169,7 @@ export async function setLangCallback(ctx: any, server: any) {
   await ctx.answerCbQuery('');
   await ctx.editMessageText(desp, Extra.HTML(true).webPreview(false).markup((m: any) =>
     m.inlineKeyboard([
-      m.callbackButton(`${ctx.i18n.t('zh_cn')} ${langFlag['zh_cn']}`, `setlang_zh_cn`),
+      m.callbackButton(`${ctx.i18n.t('zh')} ${langFlag['zh']}`, `setlang_zh`),
       m.callbackButton(`${ctx.i18n.t('en')} ${langFlag['en']}`, `setlang_en`),
     ], { columns: 2 })
   ));
@@ -177,9 +177,7 @@ export async function setLangCallback(ctx: any, server: any) {
 
 export async function searchCallback(ctx: any, server: any) {
   const [_, searchType] = ctx.match[0].split('_');
-  console.log(`searchType??? ${searchType}`)
-  console.log(`scene state: ${ctx.scene.state}`)
-  console.dir(ctx.scene.state)
+  console.log(`Search callback function, searchType: ${searchType}`)
   if (searchType === 'bot') {
     ctx.scene.enter('sbot')
   } else if (searchType === 'channel') {
