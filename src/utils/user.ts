@@ -92,6 +92,7 @@ export async function unstarTG(ctx: any, server: any, tgID: string, userid: stri
 }
 
 export async function thumbUpTG(ctx: any, server: any, tgID: string, userid: string) {
+  // TODO: add optimistic lock
   const getAsync = promisify(server.redisClient.get).bind(server.redisClient);
   const value = await getAsync('tgid:' + tgID);
   if (value !== '1') {
@@ -103,6 +104,7 @@ export async function thumbUpTG(ctx: any, server: any, tgID: string, userid: str
 }
 
 export async function unThumbUpTG(ctx: any, server: any, tgID: string, userid: string) {
+  // TODO: add optimistic lock
   const getAsync = promisify(server.redisClient.get).bind(server.redisClient);
   const value = await getAsync('tgid:' + tgID);
   if (value !== '1') {

@@ -92,7 +92,7 @@ sidebar: auto
 ### 编程语言/框架
 
 * [Golang](https://golang.org/)
-* [node.js](http://nodejs.org)
+* [Node.js](http://nodejs.org)
 * [telegraf](http://telegraf.js.org)
 
 ### 开源软件
